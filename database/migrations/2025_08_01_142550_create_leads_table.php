@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
+            $table->foreignId('lead_source_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();
             $table->string('status')->default('new');
-            $table->string('source')->nullable();
+            $table->string('source_text')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
         });
