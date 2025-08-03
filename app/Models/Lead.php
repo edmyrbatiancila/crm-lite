@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\LeadStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,12 +15,12 @@ class Lead extends Model
         'lead_source_id',
         'assigned_to',
         'status',
-        'source',
         'notes'
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
+        'status' => LeadStatus::class
     ];
 
     public function client()

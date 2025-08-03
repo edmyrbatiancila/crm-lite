@@ -10,7 +10,7 @@ class Client extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'email', 'mobile_no', 'phone', 'address', 'notes'
+        'name', 'email', 'mobile_no', 'phone', 'address', 'notes', 'assigned_to'
     ];
 
     protected $with = ['leads', 'contacts'];
@@ -47,6 +47,6 @@ class Client extends Model
 
     public function assignedTo()
     {
-        return $this->belongsTo(User::class, 'assigned_tp');
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 }
