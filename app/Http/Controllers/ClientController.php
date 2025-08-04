@@ -25,7 +25,7 @@ class ClientController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('admin/client/create-client-page');
     }
 
     /**

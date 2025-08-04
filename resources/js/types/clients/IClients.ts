@@ -6,5 +6,8 @@ export interface Clients {
     phone: string;
     address: string;
     notes?: string;
-    assigned_to: string;
+    assigned_to: {
+        id: number | null;
+        name: string;
+    } | null;
 }

@@ -22,7 +22,14 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            ClientSeeder::class
+            
+            ClientSeeder::class,
+            LeadSourceSeeder::class,
+            LeadSeeder::class,
+            ContactSeeder::class,
+            CustomFieldSeeder::class,
+            CustomFieldValueSeeder::class,
+            ActivityLogSeeder::class,
         ]);
     }
 }
