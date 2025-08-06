@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ClientRequest;
 use App\Models\Client;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -25,15 +27,31 @@ class ClientController extends Controller
      */
     public function create()
     {
-        return Inertia::render('admin/client/create-client-page');
+        $users = User::select('id', 'name')->get();
+
+        return Inertia::render('admin/client/create-client-page', [
+            'users' => $users
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ClientRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $client = Client::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'mobile_no' => $validated['mobile_no'],
+            'address' => $validated['address'] ?? null,
+            'notes' => $validated['notes'] ?? null,
+            'assigned_to' => $validated['assigned_to'],
+        ]);
+
+        return redirect()->route('clients.index')->with('success', 'Client successfully created');
     }
 
     /**

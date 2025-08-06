@@ -13,9 +13,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
-
-    Route::get('clients/create', [ClientController::class, 'create'])->name('clients.create');
+    // Client Page:
+    Route::get('clients', [ClientController::class, 'index'])->name('clients.index'); // index ClientPage
+    Route::get('clients/create', [ClientController::class, 'create'])->name('clients.create'); // Page in creating new clients.
+    Route::post('/clients/store', [ClientController::class, 'store'])->name('clients.store'); // Store new Client.
 });
 
 require __DIR__.'/settings.php';

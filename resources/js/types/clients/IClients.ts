@@ -1,3 +1,8 @@
+export interface AssignTo {
+    id: number | null;
+    name: string
+}
+
 export interface Clients {
     id: number | null;
     name: string;
@@ -6,10 +11,7 @@ export interface Clients {
     phone: string;
     address: string;
     notes?: string;
-    assigned_to?: {
-        id: number | null;
-        name: string;
-    } | null;
+    assigned_to?: AssignTo;
 }
 
 export interface ClientForm {
@@ -17,8 +19,12 @@ export interface ClientForm {
     email: string;
     mobile_no: string;
     phone: string;
+    address: string;
     notes?: string;
-    assigned_to?: {
-        id: number | null;
-    } | null;
+    assigned_to?: number | null;
+}
+
+export interface User {
+    id: number;
+    name: string;
 }
