@@ -2,6 +2,7 @@ import { Clients } from "@/types/clients/IClients";
 import { Card, CardContent } from "../ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
+import { router } from "@inertiajs/react";
 
 interface IClientPageProps {
     clients: Clients[];
@@ -32,7 +33,7 @@ const ClientLists = ({ clients }: IClientPageProps) => {
                                 <Button 
                                     size="sm" 
                                     variant="outline" 
-                                    // onClick={() => handleEdit(client)}
+                                    onClick={() => router.visit(route('clients.edit', client.id))}
                                 >
                                     Edit
                                 </Button>

@@ -11,48 +11,64 @@ import { BreadcrumbItem } from "@/types";
 import { ClientForm, User } from "@/types/clients/IClients";
 import { Head, router, useForm } from "@inertiajs/react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Edit2, Loader2, Save } from "lucide-react";
 import { FormEventHandler } from "react";
+
+interface IClientFormPageProps {
+    users: User[];
+    client?: ClientForm;
+}
+
+const ClientFormPage = ({ users, client }: IClientFormPageProps) => {
+    
+    const isEditMode = !!client;
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Create New Client',
-        href: '/clients/create'
+        title: isEditMode ? 'Edit Client' : 'Create New Client',
+        href: isEditMode ? `/clients/${client?.id}/edit` : '/clients/create',
     }
 ];
 
-interface ICreateClientPageProps {
-    users: User[];
-}
-
-const CreateClientPage = ({ users }: ICreateClientPageProps) => {
-    console.log(users);
-
-    const { data, setData, post, processing, errors, reset } = useForm<Required<ClientForm>>({
-        name: '',
-        email: '',
-        mobile_no: '',
-        phone: '',
-        address: '',
-        notes: '',
-        assigned_to: null
+    const { data, setData, post, put, processing, errors, reset } = useForm<Required<ClientForm>>({
+        id: client?.id ?? null,
+        name: client?.name ?? '',
+        email: client?.email ?? '',
+        mobile_no: client?.mobile_no ?? '',
+        phone: client?.phone ?? '',
+        address: client?.address ?? '',
+        notes: client?.notes ?? '',
+        assigned_to: client?.assigned_to ?? null
     });
 
     const handleClientSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route('clients.store'), {
-            preserveScroll: true,
-            onSuccess: () => {
-                showSuccess('Client added successfully!');
-                reset();
-            } 
-        });
+        if (client) {
+            // Edit mode: update
+            put(route('clients.update', client.id), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    showSuccess('Client updated successfully!');
+                }
+            });
+        } else {
+            // Create mode
+            post(route('clients.store'), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    showSuccess('Client added successfully!');
+                    reset();
+                }
+            });
+        }
     }
+
+    console.log('assigned_to:', data.assigned_to);
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
-            <Head title="Create New Client" />
+            <Head title={isEditMode ? 'Edit Client' : 'Create New Client'} />
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -140,7 +156,7 @@ const CreateClientPage = ({ users }: ICreateClientPageProps) => {
                                 <div className="grid gap-2">
                                     <Label htmlFor="assigned_to">Assign To</Label>
                                     <Select
-                                        // value={ data.assigned_to?.toString() || '' }
+                                        value={ data.assigned_to?.toString() || '' }
                                         onValueChange={ (e) => setData('assigned_to', Number(e)) }
                                     >
                                         <SelectTrigger>
@@ -200,10 +216,18 @@ const CreateClientPage = ({ users }: ICreateClientPageProps) => {
                                         Saving...
                                     </>
                                 ): (
-                                    <>
-                                        <Save size={ 16 } />
-                                        Save Clients
-                                    </>
+                                    !isEditMode ? (
+                                        <>
+                                            <Save size={ 16 } />
+                                            Save Client
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Edit2 size={ 16 } />
+                                            Update Client
+                                        </>
+                                    )
+                                    
                                 )}
                                 </Button>
                             </motion.div>
@@ -215,4 +239,4 @@ const CreateClientPage = ({ users }: ICreateClientPageProps) => {
     );
 }
 
-export default CreateClientPage;
+export default ClientFormPage;

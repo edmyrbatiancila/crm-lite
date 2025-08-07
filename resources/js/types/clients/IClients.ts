@@ -15,6 +15,7 @@ export interface Clients {
 }
 
 export interface ClientForm {
+    id: number | null;
     name: string;
     email: string;
     mobile_no: string;

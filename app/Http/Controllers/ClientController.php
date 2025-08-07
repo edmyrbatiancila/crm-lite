@@ -29,19 +29,19 @@ class ClientController extends Controller
     {
         $users = User::select('id', 'name')->get();
 
-        return Inertia::render('admin/client/create-client-page', [
-            'users' => $users
+        return Inertia::render('admin/client/client-form-page', [
+            'users' => $users,
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ClientRequest $request)
+    public function store(ClientRequest $request, Client $client)
     {
         $validated = $request->validated();
 
-        $client = Client::create([
+        $client->create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
@@ -67,15 +67,32 @@ class ClientController extends Controller
      */
     public function edit(Client $client)
     {
-        //
+        $users = User::select('id', 'name')->get();
+
+        return Inertia::render('admin/client/client-form-page', [
+            'users' => $users,
+            'client' => $client->load('assignedTo'),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Client $client)
+    public function update(ClientRequest $request, Client $client)
     {
-        //
+        $validated = $request->validated();
+
+        $client->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'mobile_no' => $validated['mobile_no'],
+            'address' => $validated['address'] ?? null,
+            'notes' => $validated['notes'] ?? null,
+            'assigned_to' => $validated['assigned_to'],
+        ]);
+
+        return redirect()->route('clients.index')->with('success', 'Client successfully updated');
     }
 
     /**
