@@ -21,6 +21,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const ClientPage = ({ clients }: IClientPageProps) => {
+
+    // const handleDelete = async (clientId: number) => {
+    //     // TODO: Need to put the logic here when the button is trigger for showing dialog. Then from the dialog, when user clicked confirm, this function will be use.
+    // };
+
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Clients" />
@@ -45,7 +50,10 @@ const ClientPage = ({ clients }: IClientPageProps) => {
                     </div>
                 </div>
 
-                <ClientLists clients={ clients } />
+                <ClientLists 
+                    clients={ clients } 
+                    // onHandleDelete={ handleDelete }
+                />
 
             </motion.div>
         </AppLayout>

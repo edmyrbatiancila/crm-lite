@@ -3,12 +3,18 @@ import { Card, CardContent } from "../ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
 import { router } from "@inertiajs/react";
+// import { useState } from "react";
+import DialogDelete from "../shared/dialog-delete";
 
 interface IClientPageProps {
     clients: Clients[];
+    onHandleDelete: (clientId: number | null) => void;
 }
 
-const ClientLists = ({ clients }: IClientPageProps) => {
+const ClientLists = ({ clients, onHandleDelete }: IClientPageProps) => {
+
+    // const [selectedClientDelete, setSElectedClientDelete] = useState<number[]>([]);
+
     return (
         <Card className="shadow-xl border rounded-2xl">
             <CardContent className="overflow-x-auto p-4">
@@ -33,17 +39,21 @@ const ClientLists = ({ clients }: IClientPageProps) => {
                                 <Button 
                                     size="sm" 
                                     variant="outline" 
-                                    onClick={() => router.visit(route('clients.edit', client.id))}
+                                    onClick={() => router.visit(route('clients.edit', Number(client.id)))}
                                 >
                                     Edit
                                 </Button>
-                                <Button 
+                                <DialogDelete 
+                                    getClientId={ client.id } 
+                                    onDelete={ onHandleDelete(client.id) }
+                                />
+                                {/* <Button 
                                     size="sm" 
                                     variant="destructive" 
-                                    // onClick={() => handleDelete(client.id)}
+                                    onClick={() => onHandleDelete(Number(client.id))}
                                 >
                                     Delete
-                                </Button>
+                                </Button> */}
                             </TableCell>
                         </TableRow>
                     ))}

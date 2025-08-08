@@ -46,7 +46,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
         if (client) {
             // Edit mode: update
-            put(route('clients.update', client.id), {
+            put(route('clients.update', Number(client.id)), {
                 preserveScroll: true,
                 onSuccess: () => {
                     showSuccess('Client updated successfully!');
@@ -173,6 +173,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
+                                    <InputError message={ errors.assigned_to } />
                                 </div>
                             </div>
                             <div className="grid w-full gap-3">
