@@ -19,7 +19,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/clients/store', [ClientController::class, 'store'])->name('clients.store'); // Store new Client.
     Route::get('clients/{client}/edit', [ClientController::class, 'edit'])->name('clients.edit'); // Editing certain client.
     Route::put('clients/{client}/update', [ClientController::class, 'update'])->name('clients.update'); // Updating certian client.
-    // Route::delete('/clients/{client}/destroy', [ClientController::class. 'destroy'])->name('clients.destroy');
+    Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
 });
 
 require __DIR__.'/settings.php';

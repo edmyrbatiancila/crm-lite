@@ -98,8 +98,10 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Client $client)
+    public function destroy(string $id)
     {
+        $client = Client::findOrFail($id);
+
         $client->delete();
 
         return redirect()->route('clients.index')->with('success', 'Client successfully deleted');

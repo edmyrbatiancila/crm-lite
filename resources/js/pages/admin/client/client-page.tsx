@@ -1,12 +1,13 @@
-import ClientLists from "@/components/clients/client-lists";
-import { Button } from "@/components/ui/button";
+// import ClientLists from "@/components/clients/client-lists";
+import DataLists from "@/components/shared/data-lists";
+import SetupContent from "@/components/shared/setup-content";
+import { clientColumns } from "@/constants/clients-table-columns";
 import AppLayout from "@/layouts/app-layout";
+import { showSuccess } from "@/lib/alert";
 import { BreadcrumbItem } from "@/types";
 import { Clients } from "@/types/clients/IClients";
-// import { PageProps } from "@/types/shared/flash";
-import { Head, router } from "@inertiajs/react";
-import { motion } from "framer-motion";
-import { Plus } from "lucide-react";
+import { router } from "@inertiajs/react";
+import { Plus, UserPlus2Icon } from "lucide-react";
 
 
 interface IClientPageProps {
@@ -22,40 +23,37 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const ClientPage = ({ clients }: IClientPageProps) => {
 
-    // const handleDelete = async (clientId: number) => {
-    //     // TODO: Need to put the logic here when the button is trigger for showing dialog. Then from the dialog, when user clicked confirm, this function will be use.
-    // };
+    const handleDelete =  (clientId: number | null) => {
+        router.delete(route('clients.destroy', clientId?.toString()), {
+            preserveScroll: true,
+            onSuccess: () => {
+                console.log('client deleted');
+                showSuccess('Client successfully deleted!');
+            }
+        });
+    };
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
-            <Head title="Clients" />
-            <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="space-y-6 p-4"
-            >
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <p className="text-gray-600 mt-2">Manage your client relationships and accounts.</p>
-                    </div>
-                    <div>
-                        <Button 
-                            size="lg"
-                            onClick={ ()=> router.visit(route('clients.create')) }
-                        >
-                            <Plus size={ 16 } />
-                            New
-                        </Button>
-                    </div>
-                </div>
-
-                <ClientLists 
-                    clients={ clients } 
-                    // onHandleDelete={ handleDelete }
-                />
-
-            </motion.div>
+            <SetupContent<Clients> 
+                headTitle="Clients"
+                onData={ clients }
+                onDelete={ handleDelete }
+                setupDescription="Manage your client relationships and accounts."
+                buttonTitle="New Client"
+                createRoute="clients.create"
+                renderList={ ((onData, onDelete) => (
+                    <DataLists<Clients> 
+                        keyExtractor={ (client) => client.id }
+                        data={ onData }
+                        columns={clientColumns(onDelete)}
+                    />
+                )) }
+                emptyTitle="No Clients"
+                emptyDescription="Get started by creating a new client"
+                emptyHeadIcon={ <UserPlus2Icon className="h-[34px] w-[34px] mx-auto" /> }
+                emptyButtonIcon={ <Plus size={ 16 } /> }
+            />
         </AppLayout>
     );
 }

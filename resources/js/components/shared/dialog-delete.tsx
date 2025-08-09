@@ -37,7 +37,7 @@ const DialogDelete = ({ getClientId, onDelete }: IDialogDeleteProps) => {
                         variant="destructive" 
                         onClick={() => onDelete(getClientId)}
                     >
-                        Yes, Proceed
+                        Confirm
                     </Button>
                 </DialogFooter>
             </DialogContent>
