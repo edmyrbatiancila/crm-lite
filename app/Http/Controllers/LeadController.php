@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Lead;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class LeadController extends Controller
 {
@@ -12,7 +13,11 @@ class LeadController extends Controller
      */
     public function index()
     {
-        //
+        $leads = Lead::with('client', 'assignedTo', 'customFieldValues', 'leadSource', 'activityLogs')->latest()->get();
+
+        return Inertia::render('admin/leads/lead-page', [
+            'leads' => $leads
+        ]);
     }
 
     /**
@@ -20,7 +25,7 @@ class LeadController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('admin/leads/lead-form-page');
     }
 
     /**

@@ -1,7 +1,4 @@
-export interface AssignTo {
-    id: number | null;
-    name: string
-}
+import { AssignTo } from "../shared/assign-to";
 
 export interface Clients {
     id: number | null;

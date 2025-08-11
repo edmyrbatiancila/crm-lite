@@ -7,7 +7,7 @@ import { showSuccess } from "@/lib/alert";
 import { BreadcrumbItem } from "@/types";
 import { Clients } from "@/types/clients/IClients";
 import { router } from "@inertiajs/react";
-import { Plus, UserPlus2Icon } from "lucide-react";
+import { UserPlus2Icon } from "lucide-react";
 
 
 interface IClientPageProps {
@@ -22,6 +22,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const ClientPage = ({ clients }: IClientPageProps) => {
+
+    console.log(clients);
 
     const handleDelete =  (clientId: number | null) => {
         router.delete(route('clients.destroy', clientId?.toString()), {
@@ -52,7 +54,6 @@ const ClientPage = ({ clients }: IClientPageProps) => {
                 emptyTitle="No Clients"
                 emptyDescription="Get started by creating a new client"
                 emptyHeadIcon={ <UserPlus2Icon className="h-[34px] w-[34px] mx-auto" /> }
-                emptyButtonIcon={ <Plus size={ 16 } /> }
             />
         </AppLayout>
     );

@@ -15,7 +15,6 @@ interface ISetupContentProps<T> {
     emptyTitle: string;
     emptyDescription: string;
     emptyHeadIcon: React.ReactNode;
-    emptyButtonIcon: React.ReactNode;
 }
 
 const SetupContent = <T,> ({
@@ -29,7 +28,6 @@ const SetupContent = <T,> ({
     emptyTitle,
     emptyDescription,
     emptyHeadIcon,
-    emptyButtonIcon 
 }: ISetupContentProps<T>) => {
     return (
         <>
@@ -64,8 +62,9 @@ const SetupContent = <T,> ({
                     headIcon={ emptyHeadIcon }
                     title={ emptyTitle }
                     description={ emptyDescription }
-                    buttonIcon={ emptyButtonIcon }
+                    // buttonIcon={ emptyButtonIcon }
                     buttonTitle={ buttonTitle }
+                    onCreateRoute={ createRoute }
                 />
             )}
             </motion.div>

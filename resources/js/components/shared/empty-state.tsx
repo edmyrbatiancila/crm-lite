@@ -1,21 +1,22 @@
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { router } from "@inertiajs/react";
+import { Plus } from "lucide-react";
 
 interface IEmptyStateProps {
     headIcon: React.ReactNode;
     title: string;
     description: string;
-    buttonIcon: React.ReactNode;
     buttonTitle: string;
+    onCreateRoute: string;
 }
 
 const EmptyState = ({
     headIcon,
     title,
     description,
-    buttonIcon,
-    buttonTitle
+    buttonTitle,
+    onCreateRoute
 }: IEmptyStateProps) => {
     return (
         <div className="flex flex-col items-center justify-center">
@@ -34,9 +35,9 @@ const EmptyState = ({
             >
                 <Button
                     size="lg"
-                    onClick={ ()=> router.visit(route('clients.create')) }
+                    onClick={ ()=> router.visit(route(onCreateRoute)) }
                 >
-                    { buttonIcon }
+                    <Plus size={ 16 } />
                     { buttonTitle }
                     </Button>
             </motion.div>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\LeadController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -19,7 +20,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/clients/store', [ClientController::class, 'store'])->name('clients.store'); // Store new Client.
     Route::get('clients/{client}/edit', [ClientController::class, 'edit'])->name('clients.edit'); // Editing certain client.
     Route::put('clients/{client}/update', [ClientController::class, 'update'])->name('clients.update'); // Updating certian client.
-    Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
+    Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy'); // deleting client.
+
+    // Leads Page:
+    Route::get('leads', [LeadController::class, 'index'])->name('leads.index'); // index page for Leads.
+    Route::get('leads/create', [LeadController::class, 'create'])->name('leads.create'); // Page in creating new leads.
 });
 
 require __DIR__.'/settings.php';

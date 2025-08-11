@@ -1,8 +1,9 @@
 import { Clients } from "@/types/clients/IClients";
-import { Button } from "@/components/ui/button";
-import DialogDelete from "@/components/shared/dialog-delete";
-import { router } from "@inertiajs/react";
+// import { Button } from "@/components/ui/button";
+// import DialogDelete from "@/components/shared/dialog-delete";
+// import { router } from "@inertiajs/react";
 import { Column } from "@/types/shared/database-column";
+import ActionButtons from "@/components/shared/action-buttons";
 
 export const clientColumns = (
     onDelete: (id: number | null) => void
@@ -15,16 +16,21 @@ export const clientColumns = (
         label: "Actions",
         className: "text-right",
         render: (c) => (
-            <div className="space-x-2">
-                <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => router.visit(route("clients.edit", Number(c.id)))}
-                >
-                    Edit
-                </Button>
-                <DialogDelete getClientId={c.id} onDelete={() => onDelete(c.id)} />
-            </div>
+            <ActionButtons 
+                editRoute="clients.edit"
+                renderParam={ c }
+                onDelete={ onDelete }
+            />
+            // <div className="space-x-2">
+            //     <Button
+            //         size="sm"
+            //         variant="outline"
+            //         onClick={() => router.visit(route("clients.edit", Number(c.id)))}
+            //     >
+            //         Edit
+            //     </Button>
+            //     <DialogDelete getClientId={c.id} onDelete={() => onDelete(c.id)} />
+            // </div>
         ),
     },
 ];
