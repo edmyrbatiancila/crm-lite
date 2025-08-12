@@ -13,6 +13,7 @@ const DialogDelete = ({ getClientId, onDelete }: IDialogDeleteProps) => {
                 <Button 
                     size="sm" 
                     variant="destructive" 
+                    className="cursor-pointer"
                 >
                     Delete
                 </Button>

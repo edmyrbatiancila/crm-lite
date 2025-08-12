@@ -15,6 +15,7 @@ const ActionButtons = ({ editRoute, renderParam, onDelete }: IActionButtonsProps
                 size="sm"
                 variant="outline"
                 onClick={() => router.visit(route(editRoute, Number(renderParam.id)))}
+                className="cursor-pointer"
             >
                 Edit
             </Button>
