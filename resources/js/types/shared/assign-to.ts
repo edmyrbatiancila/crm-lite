@@ -1,4 +1,4 @@
 export interface AssignTo {
     id: number | null;
-    name: string
+    first_name: string
 }

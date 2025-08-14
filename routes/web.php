@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -13,6 +14,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+
+    // Users Page:
+    Route::get('/users', [UserController::class, 'index'])->name('users.index'); // Index page for Users.
+    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
 
     // Client Page:
     Route::get('clients', [ClientController::class, 'index'])->name('clients.index'); // index ClientPage

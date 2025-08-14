@@ -24,5 +24,5 @@ export interface ClientForm {
 
 export interface User {
     id: number;
-    name: string;
+    first_name: string;
 }

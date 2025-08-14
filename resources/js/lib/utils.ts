@@ -13,6 +13,11 @@ export const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
+    {
+        title: 'Users',
+        href: '/users',
+        icon: UserCircleIcon,
+    }
 ];
 
 export const footerNavItems: NavItem[] = [

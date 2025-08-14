@@ -99,7 +99,7 @@ const FormInput = ({
                                 <SelectLabel>Existing User</SelectLabel>
                                 {users.map((user) => (
                                     <SelectItem key={ user.id } value={ user.id.toString() }>
-                                        { user.name }
+                                        { user.first_name }
                                     </SelectItem>
                                 ))}
                             </SelectGroup>

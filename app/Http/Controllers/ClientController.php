@@ -27,7 +27,7 @@ class ClientController extends Controller
      */
     public function create()
     {
-        $users = User::select('id', 'name')->get();
+        $users = User::select('id', 'first_name')->get();
 
         return Inertia::render('admin/client/client-form-page', [
             'users' => $users,
@@ -67,7 +67,7 @@ class ClientController extends Controller
      */
     public function edit(Client $client)
     {
-        $users = User::select('id', 'name')->get();
+        $users = User::select('id', 'first_name')->get();
 
         return Inertia::render('admin/client/client-form-page', [
             'users' => $users,

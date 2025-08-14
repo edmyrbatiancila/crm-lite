@@ -11,7 +11,7 @@ export const clientColumns = (
     { label: "Name", render: (c) => c.name },
     { label: "Email", render: (c) => c.email },
     { label: "Phone", render: (c) => c.phone },
-    { label: "Assigned To", render: (c) => c.assigned_to?.name ?? "-" },
+    { label: "Assigned To", render: (c) => c.assigned_to?.first_name ?? "-" },
     {
         label: "Actions",
         className: "text-right",
