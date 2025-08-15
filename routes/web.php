@@ -18,6 +18,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Users Page:
     Route::get('/users', [UserController::class, 'index'])->name('users.index'); // Index page for Users.
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('/users/store', [UserController::class, 'store'])->name('users.store'); // Store new User.
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit'); // Editing certain user.
+    Route::put('/users/{user}/update', [UserController::class, 'update'])->name('users.update'); // Updating certain user.
 
     // Client Page:
     Route::get('clients', [ClientController::class, 'index'])->name('clients.index'); // index ClientPage
