@@ -19,7 +19,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        // $this->authorize('viewAny', User::class);
+        $this->authorize('viewAny', User::class);
         
         // $users = User::select('id', 'first_name', 'last_name', 'email', 'created_at')->latest()->get();
         $users = User::latest()->paginate(10);
@@ -34,7 +34,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        // $this->authorize('create', User::class);
+        $this->authorize('create', User::class);
         
         $mode = 'create';
         return Inertia::render('users/users-creation-page', [
@@ -47,7 +47,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        // $this->authorize('create', User::class);
+        $this->authorize('create', User::class);
         
         // $request->validate([
         //     'first_name' => 'required|string|max:255',
@@ -80,7 +80,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        // $this->authorize('update', $user);
+        $this->authorize('update', $user);
         
         $mode = 'edit';
         return Inertia::render('users/users-creation-page', [
@@ -94,7 +94,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        // $this->authorize('update', $user);
+        $this->authorize('update', $user);
         
         // $rules = [
         //     'first_name' => 'required|string|max:255',
@@ -130,7 +130,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // $this->authorize('delete', $user);
+        $this->authorize('delete', $user);
         
         if (Auth::user()->id === $user->id) {
             return redirect()->route('users.index')->with('error', 'You cannot delete your own account.');

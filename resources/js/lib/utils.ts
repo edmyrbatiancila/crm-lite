@@ -1,6 +1,6 @@
 import { NavItem } from '@/types';
 import { type ClassValue, clsx } from 'clsx';
-import { BookOpen, Folder, LayoutGrid, UserCircleIcon, UserPlus } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, UserCircleIcon, UserPlus, UserSquareIcon } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -13,11 +13,6 @@ export const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
-    {
-        title: 'Users',
-        href: '/users',
-        icon: UserCircleIcon,
-    }
 ];
 
 export const footerNavItems: NavItem[] = [
@@ -43,5 +38,10 @@ export const collapsibleMenu: NavItem[] = [
         title: 'Leads',
         href: '/leads',
         icon: UserCircleIcon
+    },
+    {
+        title: 'Users',
+        href: '/users',
+        icon: UserSquareIcon
     }
 ];
