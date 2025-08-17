@@ -21,6 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/users/store', [UserController::class, 'store'])->name('users.store'); // Store new User.
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit'); // Editing certain user.
     Route::put('/users/{user}/update', [UserController::class, 'update'])->name('users.update'); // Updating certain user.
+    Route::delete('/users/{user}/destroy', [UserController::class, 'destroy'])->name('users.destroy'); //deleting or removing user.
 
     // Client Page:
     Route::get('clients', [ClientController::class, 'index'])->name('clients.index'); // index ClientPage

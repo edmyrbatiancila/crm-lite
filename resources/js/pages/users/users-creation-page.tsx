@@ -7,13 +7,16 @@ import AppLayout from "@/layouts/app-layout";
 import { BreadcrumbItem } from "@/types";
 import { UserForm } from "@/types/users/IUsers";
 import { useForm } from "@inertiajs/react";
+import { useFlashMessages } from "@/hooks/use-flash-messages";
 
 interface IUsersCreationPageProps {
     user?: UserForm;
+    mode: string;
 }
 
-const UsersCreationPage = ({ user }: IUsersCreationPageProps) => {
-    const isEditMode = !!user;
+const UsersCreationPage = ({ user, mode }: IUsersCreationPageProps) => {
+    // const isEditMode = !!user;
+    useFlashMessages(); // Handle flash messages
 
     const { data, setData, post, put, processing, errors, reset } = useForm({
         id: user?.id ?? null,
@@ -25,8 +28,8 @@ const UsersCreationPage = ({ user }: IUsersCreationPageProps) => {
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: isEditMode ? 'Edit User' : 'Create New User',
-            href: isEditMode ? `/users/${user?.id}/edit` : '/users/create',
+            title: mode === 'edit' ? 'Edit User' : 'Create New User',
+            href: mode === 'create' ? `/users/${user?.id}/edit` : '/users/create',
         }
     ];
 
@@ -37,7 +40,7 @@ const UsersCreationPage = ({ user }: IUsersCreationPageProps) => {
 
     const handleUserSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (isEditMode && data.id) {
+        if (mode === 'edit' && data.id) {
             put(route('users.update', data.id), {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -57,7 +60,7 @@ const UsersCreationPage = ({ user }: IUsersCreationPageProps) => {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <FormPageContent
-                headTitle={isEditMode ? 'Edit User' : 'Create New User'}
+                headTitle={mode === 'edit' ? 'Edit User' : 'Create New User'}
                 backRoute="users.index"
                 backButton="Back to Users"
                 formTitle="user"
@@ -68,7 +71,8 @@ const UsersCreationPage = ({ user }: IUsersCreationPageProps) => {
                     errors={errors}
                     processing={processing}
                     onInputChange={handleInputChange}
-                    isEditMode={isEditMode}
+                    // isEditMode={isEditMode}
+                    mode={ mode }
                 />
             </FormPageContent>
         </AppLayout>

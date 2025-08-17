@@ -20,6 +20,7 @@ export const clientColumns = (
                 editRoute="clients.edit"
                 renderParam={ c }
                 onDelete={ onDelete }
+                pageName="client"
             />
             // <div className="space-x-2">
             //     <Button

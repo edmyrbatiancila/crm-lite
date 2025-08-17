@@ -6,7 +6,9 @@ import AppLayout from "@/layouts/app-layout";
 import { User } from "@/types";
 import { Pagination } from "@/types/global";
 import { userBreadcrumbs } from "@/types/users/IUsers";
+import { router } from "@inertiajs/react";
 import { UserPlusIcon } from "lucide-react";
+import { useFlashMessages } from "@/hooks/use-flash-messages";
 
 interface IUsersPageProps {
     users: Pagination<User>;
@@ -14,11 +16,16 @@ interface IUsersPageProps {
 
 const handleDelete = (userId: number | null) => {
     console.log(userId);
-    // TODO: Will be added delete functionality soon
+    router.delete(route('users.destroy', userId?.toString()), {
+        preserveScroll: true,
+    });
+    
 };
 
 
 export default function UsersPage({ users }: IUsersPageProps) {
+    useFlashMessages(); // Handle flash messages
+
     console.log(users);
 
     return (

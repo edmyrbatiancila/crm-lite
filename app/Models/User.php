@@ -4,13 +4,15 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -45,5 +47,23 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Authorization helper methods for specific resources
+     */
+    public function canManageUsers(): bool
+    {
+        return $this->hasAnyPermission(['manage users', 'create users', 'edit users', 'delete users']);
+    }
+
+    public function canManageClients(): bool
+    {
+        return $this->hasAnyPermission(['manage clients', 'create clients', 'edit clients', 'delete clients']);
+    }
+
+    public function canManageLeads(): bool
+    {
+        return $this->hasAnyPermission(['manage leads', 'create leads', 'edit leads', 'delete leads']);
     }
 }

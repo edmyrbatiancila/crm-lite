@@ -8,7 +8,7 @@ export const userColumns = (
 
     { label: "First Name", render: (u) => u.first_name },
     { label: "Last Name", render: (u) => u.last_name },
-    { label: "Last Name", render: (u) => u.last_name },
+    { label: "Email Address", render: (u) => u.email },
     { label: "Creation Date", render: (u) => u.created_at },
     {
         label: "Actions",
@@ -18,6 +18,7 @@ export const userColumns = (
                 editRoute="users.edit"
                 renderParam={ u }
                 onDelete={ onDelete }
+                pageName="user"
             />
         )
     }

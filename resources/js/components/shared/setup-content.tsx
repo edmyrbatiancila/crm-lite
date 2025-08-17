@@ -47,6 +47,7 @@ const SetupContent = <T,> ({
                         <div>
                             <Button
                                 size="lg"
+                                className="cursor-pointer"
                                 onClick={ ()=> router.visit(route(createRoute)) }
                             >
                                 <Plus size={ 16 } />

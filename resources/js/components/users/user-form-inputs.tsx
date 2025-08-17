@@ -12,7 +12,8 @@ interface IUserFormInputsProps {
     errors: Partial<Record<keyof UserForm, string>>;
     processing: boolean;
     onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    isEditMode: boolean;
+    // isEditMode: boolean;
+    mode: string;
 }
 
 const UserFormInputs = ({
@@ -21,11 +22,12 @@ const UserFormInputs = ({
     errors,
     processing,
     onInputChange,
-    isEditMode
+    // isEditMode,
+    mode
 }: IUserFormInputsProps) => {
     return (
         <form onSubmit={ onUserSubmit } className="flex flex-col gap-6">
-            <div className="grid lg:grid-cols-2 gap-6">
+            {/* <div className="grid lg:grid-cols-2 gap-6"> */}
                 <div className="grid gap-2">
                     <Label htmlFor="firstName">
                         First Name<span className="text-red-600 ml-2">*</span>
@@ -75,6 +77,7 @@ const UserFormInputs = ({
                     />
                     <InputError message={errors.email} />
                 </div>
+            {mode === 'create' && (
                 <div className="grid gap-2">
                     <Label htmlFor="password">
                         Password<span className="text-red-600 ml-2">*</span>
@@ -85,58 +88,59 @@ const UserFormInputs = ({
                         name="password"
                         value={ onData.password }
                         onChange={ onInputChange }
-                        placeholder={ isEditMode ? "Leave blank to keep current password" : "Enter user's password" }
+                        placeholder={ "Enter user's password" }
                         className="shadow-md"
                         disabled={ processing }
                     />
                     <InputError message={errors.password} />
                 </div>
-
-                <motion.div
-                    whileHover={{ scale: 1.01 }} 
-                    whileTap={{ scale: 1.00 }}
-                    className="grid w-full lg:flex lg:justify-end"
+            )}
+                
+            {/* </div> */}
+            <motion.div
+                whileHover={{ scale: 1.01 }} 
+                whileTap={{ scale: 1.00 }}
+                className="grid w-full lg:flex lg:justify-end"
+            >
+                <Button
+                    type="submit"
+                    size="lg"
+                    disabled={ processing }
+                    className="cursor-pointer"
                 >
-                    <Button
-                        type="submit"
-                        size="lg"
-                        disabled={ processing }
-                        className="cursor-pointer"
-                    >
-                    {!isEditMode ? (
+                {mode === 'create' ? (
+                    <>
+                    {processing ? (
                         <>
-                        {processing ? (
-                            <>
-                                <Loader2 className="animate-spin" size={ 16 } />
-                                Saving...
-                            </>
-                            
-                        ) : (
-                            <>
-                            <Save size={ 16 } />
-                            Save User
-                            </>
-                        
-                        )}
+                            <Loader2 className="animate-spin" size={ 16 } />
+                            Saving...
                         </>
+                            
                     ) : (
                         <>
-                            {processing ? (
-                                <>
-                                    <Loader2 className="animate-spin" size={ 16 } />
-                                    Updating...
-                                </>
-                            ): (
-                                <>
-                                    <Edit size={ 16 } />
-                                    Update User
-                                </>
-                            )}
+                        <Save size={ 16 } />
+                        Save User
+                        </>
+                        
+                    )}
+                    </>
+                ) : (
+                    <>
+                    {processing ? (
+                        <>
+                            <Loader2 className="animate-spin" size={ 16 } />
+                            Updating...
+                        </>
+                    ): (
+                        <>
+                            <Edit size={ 16 } />
+                            Update User
                         </>
                     )}
+                    </>
+                )}
                     </Button>
                 </motion.div>
-            </div>
         </form>
     );
 }

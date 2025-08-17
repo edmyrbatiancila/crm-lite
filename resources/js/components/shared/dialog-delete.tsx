@@ -4,9 +4,10 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 interface IDialogDeleteProps {
     getClientId: number | null;
     onDelete: (clientId: number | null) => void;
+    getDataName: string;
 }
 
-const DialogDelete = ({ getClientId, onDelete }: IDialogDeleteProps) => {
+const DialogDelete = ({ getClientId, onDelete, getDataName }: IDialogDeleteProps) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -24,19 +25,23 @@ const DialogDelete = ({ getClientId, onDelete }: IDialogDeleteProps) => {
                         <span className="text-2xl">Warning!!!</span>
                     </DialogTitle>
                     <DialogDescription className="text-center space-y-2">
-                        <p className="text-xl">You are about to delete this client.</p>
+                        <p className="text-xl">You are about to delete this { getDataName }.</p>
                         <p className="text-lg">Are you sure you want to proceed?</p>
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="flex justify-center items-center">
                     <DialogClose asChild>
-                        <Button variant="outline">
+                        <Button 
+                            variant="outline"
+                            className="cursor-pointer"
+                        >
                             Cancel
                         </Button>
                     </DialogClose>
                     <Button 
                         variant="destructive" 
                         onClick={() => onDelete(getClientId)}
+                        className="cursor-pointer"
                     >
                         Confirm
                     </Button>

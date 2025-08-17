@@ -6,9 +6,10 @@ interface IActionButtonsProps {
     editRoute: string;
     renderParam: any;
     onDelete: (id: number | null) => void;
+    pageName: string;
 }
 
-const ActionButtons = ({ editRoute, renderParam, onDelete }: IActionButtonsProps) => {
+const ActionButtons = ({ editRoute, renderParam, onDelete, pageName }: IActionButtonsProps) => {
     return (
         <div className="space-x-2">
             <Button
@@ -19,7 +20,12 @@ const ActionButtons = ({ editRoute, renderParam, onDelete }: IActionButtonsProps
             >
                 Edit
             </Button>
-            <DialogDelete getClientId={renderParam.id} onDelete={() => onDelete(renderParam.id)} />
+            <DialogDelete 
+                getClientId={renderParam.id} 
+                onDelete={() => onDelete(renderParam.id)}
+                getDataName={pageName}
+            />
+
         </div>
     );
 }

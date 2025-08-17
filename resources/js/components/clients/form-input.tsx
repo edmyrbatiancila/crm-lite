@@ -43,6 +43,7 @@ const FormInput = ({
                         onChange={ onInputTxtAreaChange }
                         placeholder="ABC Company"
                         className="shadow-md"
+                        autoFocus
                     />
                     <InputError message={ errors.name } />
                 </div>

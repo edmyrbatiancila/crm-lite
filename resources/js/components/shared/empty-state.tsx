@@ -36,6 +36,7 @@ const EmptyState = ({
                 <Button
                     size="lg"
                     onClick={ ()=> router.visit(route(onCreateRoute)) }
+                    className="cursor-pointer"
                 >
                     <Plus size={ 16 } />
                     { buttonTitle }
