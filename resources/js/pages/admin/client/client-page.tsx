@@ -1,25 +1,26 @@
 // import ClientLists from "@/components/clients/client-lists";
 import DataLists from "@/components/shared/data-lists";
+import PagePagination from "@/components/shared/page-pagination";
 import SetupContent from "@/components/shared/setup-content";
 import { clientColumns } from "@/constants/clients-table-columns";
 import AppLayout from "@/layouts/app-layout";
 import { showSuccess } from "@/lib/alert";
-import { BreadcrumbItem } from "@/types";
-import { Clients } from "@/types/clients/IClients";
+import { clientBreadcrumbs, Clients } from "@/types/clients/IClients";
+import { Pagination } from "@/types/global";
 import { router } from "@inertiajs/react";
 import { UserPlus2Icon } from "lucide-react";
 
 
 interface IClientPageProps {
-    clients: Clients[];
+    clients: Pagination<Clients>;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Clients',
-        href: '/clients',
-    }
-];
+// const breadcrumbs: BreadcrumbItem[] = [
+//     {
+//         title: 'Clients',
+//         href: '/clients',
+//     }
+// ];
 
 const ClientPage = ({ clients }: IClientPageProps) => {
 
@@ -36,10 +37,10 @@ const ClientPage = ({ clients }: IClientPageProps) => {
     };
 
     return (
-        <AppLayout breadcrumbs={ breadcrumbs }>
+        <AppLayout breadcrumbs={ clientBreadcrumbs }>
             <SetupContent<Clients> 
                 headTitle="Clients"
-                onData={ clients }
+                onData={ clients.data }
                 onDelete={ handleDelete }
                 setupDescription="Manage your client relationships and accounts."
                 buttonTitle="New Client"
@@ -48,13 +49,16 @@ const ClientPage = ({ clients }: IClientPageProps) => {
                     <DataLists<Clients> 
                         keyExtractor={ (client) => client.id }
                         data={ onData }
-                        columns={clientColumns(onDelete)}
+                        columns={ clientColumns(onDelete) }
                     />
                 )) }
                 emptyTitle="No Clients"
                 emptyDescription="Get started by creating a new client"
-                emptyHeadIcon={ <UserPlus2Icon className="h-[34px] w-[34px] mx-auto" /> }
+                emptyHeadIcon={ 
+                    <UserPlus2Icon className="h-[34px] w-[34px] mx-auto" /> 
+                }
             />
+            <PagePagination links={ clients.links } />
         </AppLayout>
     );
 }

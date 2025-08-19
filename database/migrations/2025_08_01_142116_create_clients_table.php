@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

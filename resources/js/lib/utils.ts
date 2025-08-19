@@ -13,6 +13,21 @@ export const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
+    {
+        title: 'Users',
+        href: '/users',
+        icon: UserSquareIcon,
+    },
+    {
+        title: 'Clients',
+        href: '/clients',
+        icon: UserPlus,
+    },
+    {
+        title: 'Leads',
+        href: '/leads',
+        icon: UserCircleIcon,
+    }
 ];
 
 export const footerNavItems: NavItem[] = [
@@ -26,22 +41,4 @@ export const footerNavItems: NavItem[] = [
         href: 'https://laravel.com/docs/starter-kits#react',
         icon: BookOpen,
     },
-];
-
-export const collapsibleMenu: NavItem[] = [
-    {
-        title: 'Clients',
-        href: '/clients',
-        icon: UserPlus
-    },
-    {
-        title: 'Leads',
-        href: '/leads',
-        icon: UserCircleIcon
-    },
-    {
-        title: 'Users',
-        href: '/users',
-        icon: UserSquareIcon
-    }
 ];

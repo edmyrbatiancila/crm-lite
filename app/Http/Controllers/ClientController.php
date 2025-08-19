@@ -15,7 +15,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $clients = Client::with(['leads', 'contacts', 'assignedTo'])->latest()->get();
+        $clients = Client::with(['leads', 'contacts', 'assignedTo'])->latest()->paginate(10);
 
         return Inertia::render('admin/client/client-page', [
             'clients' => $clients
@@ -39,17 +39,8 @@ class ClientController extends Controller
      */
     public function store(ClientRequest $request, Client $client)
     {
-        $validated = $request->validated();
 
-        $client->create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'mobile_no' => $validated['mobile_no'],
-            'address' => $validated['address'] ?? null,
-            'notes' => $validated['notes'] ?? null,
-            'assigned_to' => $validated['assigned_to'],
-        ]);
+        Client::create($request->validated());
 
         return redirect()->route('clients.index')->with('success', 'Client successfully created');
     }
@@ -80,17 +71,8 @@ class ClientController extends Controller
      */
     public function update(ClientRequest $request, Client $client)
     {
-        $validated = $request->validated();
 
-        $client->update([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'mobile_no' => $validated['mobile_no'],
-            'address' => $validated['address'] ?? null,
-            'notes' => $validated['notes'] ?? null,
-            'assigned_to' => $validated['assigned_to'],
-        ]);
+        $client->update($request->validated());
 
         return redirect()->route('clients.index')->with('success', 'Client successfully updated');
     }
@@ -98,10 +80,8 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Client $client)
     {
-        $client = Client::findOrFail($id);
-
         $client->delete();
 
         return redirect()->route('clients.index')->with('success', 'Client successfully deleted');

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\RoleEnum;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -46,11 +47,11 @@ class RoleSeeder extends Seeder
         }
 
         // Create admin role and assign all permissions
-        $adminRole = Role::create(['name' => 'admin']);
+        $adminRole = Role::create(['name' => RoleEnum::ADMIN]);
         $adminRole->givePermissionTo($permissions);
 
         // Create user role with limited permissions
-        $userRole = Role::create(['name' => 'user']);
+        $userRole = Role::create(['name' => RoleEnum::USER]);
         $userRole->givePermissionTo(['view clients', 'view leads']);
     }
 }

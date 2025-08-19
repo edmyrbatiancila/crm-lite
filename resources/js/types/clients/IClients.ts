@@ -1,3 +1,4 @@
+import { BreadcrumbItem } from "..";
 import { AssignTo } from "../shared/assign-to";
 
 export interface Clients {
@@ -26,3 +27,10 @@ export interface User {
     id: number;
     first_name: string;
 }
+
+export const clientBreadcrumbs: BreadcrumbItem[] = [
+    { 
+        title: 'Clients', 
+        href: '/clients' 
+    }
+];

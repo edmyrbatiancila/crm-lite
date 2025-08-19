@@ -21,7 +21,6 @@ class UserController extends Controller
     {
         $this->authorize('viewAny', User::class);
         
-        // $users = User::select('id', 'first_name', 'last_name', 'email', 'created_at')->latest()->get();
         $users = User::latest()->paginate(10);
 
         return Inertia::render('users/users-page', [
@@ -48,20 +47,6 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $this->authorize('create', User::class);
-        
-        // $request->validate([
-        //     'first_name' => 'required|string|max:255',
-        //     'last_name' => 'required|string|max:255',
-        //     'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-        //     'password' => 'required|string|min:8',
-        // ]);
-
-        // User::create([
-        //     'first_name' => $request->first_name,
-        //     'last_name' => $request->last_name,
-        //     'email' => $request->email,
-        //     'password' => Hash::make($request->password),
-        // ]);
         User::create($request->validated());
 
         return redirect()->route('users.index')->with('success', 'User successfully created');
@@ -95,30 +80,6 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user)
     {
         $this->authorize('update', $user);
-        
-        // $rules = [
-        //     'first_name' => 'required|string|max:255',
-        //     'last_name' => 'required|string|max:255',
-        //     'email' => 'required|string|lowercase|email|max:255|unique:users,email,' . $user->id,
-        // ];
-
-        // // Only validate password if it's provided
-        // if ($request->filled('password')) {
-        //     $rules['password'] = 'string|min:8';
-        // }
-
-        // $validated = $request->validate($rules);
-
-        // $updateData = [
-        //     'first_name' => $validated['first_name'],
-        //     'last_name' => $validated['last_name'],
-        //     'email' => $validated['email'],
-        // ];
-
-        // // Only update password if provided
-        // if ($request->filled('password')) {
-        //     $updateData['password'] = Hash::make($validated['password']);
-        // }
 
         $user->update($request->validated());
 
