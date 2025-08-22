@@ -37,7 +37,7 @@ class ClientRequest extends FormRequest
             'phone'             => 'nullable|string|max:20',
             'address'           => 'required|string|max:500',
             'notes'             => 'nullable|string|max:500',
-            'assigned_to'       => 'nullable|exists:users,id'
+            'assigned_to'       => ['nullable', Rule::exists('users', 'id')]
         ];
     }
 

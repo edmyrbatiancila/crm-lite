@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             ClientSeeder::class,
+            ProjectSeeder::class,
             LeadSourceSeeder::class,
             LeadSeeder::class,
             ContactSeeder::class,

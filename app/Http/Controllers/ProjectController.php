@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ModeStatus;
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Models\Client;
+use App\Models\User;
+use Inertia\Inertia;
 
 class ProjectController extends Controller
 {
@@ -13,7 +17,11 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //
+        $projects = Project::with(['user', 'client'])->latest()->paginate(10);
+
+        return Inertia::render('projects/project-page', [
+            'projects' => $projects
+        ]);
     }
 
     /**
@@ -21,7 +29,16 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        $users = User::select(['id', 'first_name', 'last_name'])->get();
+        $clients = Client::select(['id', 'name'])->get();
+        $mode = ModeStatus::CREATE;
+
+
+        return Inertia::render('projects/project-creation-page', [
+            'users' => $users,
+            'clients' => $clients,
+            'mode' => $mode
+        ]);
     }
 
     /**

@@ -29,7 +29,7 @@ const UsersCreationPage = ({ user, mode }: IUsersCreationPageProps) => {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: mode === 'edit' ? 'Edit User' : 'Create New User',
-            href: mode === 'create' ? `/users/${user?.id}/edit` : '/users/create',
+            href: mode === 'create' ? '/users/create' : `/users/${user?.id}/edit`,
         }
     ];
 

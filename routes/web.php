@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,6 +31,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('clients/{client}/edit', [ClientController::class, 'edit'])->name('clients.edit'); // Editing certain client.
     Route::put('clients/{client}/update', [ClientController::class, 'update'])->name('clients.update'); // Updating certian client.
     Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy'); // deleting client.
+
+    // Project Page:
+    Route::get('projects', [ProjectController::class, 'index'])->name('projects.index'); // index page for Projects.
+    Route::get('projects/create', [ProjectController::class, 'create'])->name('projects.create'); // Page in creating new projects.
 
     // Leads Page:
     Route::get('leads', [LeadController::class, 'index'])->name('leads.index'); // index page for Leads.
