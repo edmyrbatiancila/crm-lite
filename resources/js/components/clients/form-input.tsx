@@ -3,10 +3,10 @@ import InputError from "../input-error";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { motion } from "framer-motion";
 import { ClientForm, User } from "@/types/clients/IClients";
+import SelectInput from "../shared/select-input";
 // import { FormEventHandler } from "react";
 
 interface IFormInputProps {
@@ -44,6 +44,7 @@ const FormInput = ({
                         placeholder="ABC Company"
                         className="shadow-md"
                         autoFocus
+                        disabled={ processing }
                     />
                     <InputError message={ errors.name } />
                 </div>
@@ -57,6 +58,7 @@ const FormInput = ({
                         onChange={ onInputTxtAreaChange }
                         placeholder="client@gmail.com"
                         className="shadow-md"
+                        disabled={ processing }
                     />
                     <InputError message={ errors.email } />
                 </div>
@@ -70,6 +72,7 @@ const FormInput = ({
                         onChange={ onInputTxtAreaChange }
                         placeholder="09876543210"
                         className="shadow-md"
+                        disabled={ processing }
                     />
                     <InputError message={ errors.mobile_no } />
                 </div>
@@ -83,30 +86,24 @@ const FormInput = ({
                         onChange={ onInputTxtAreaChange }
                         placeholder="123-456-789"
                         className="shadow-md"
+                        disabled={ processing }
                     />
                     <InputError message={ errors.phone } />
                 </div>
                 <div className="grid gap-2">
-                    <Label htmlFor="assigned_to">Assign To</Label>
-                    <Select
-                        value={ onData.assigned_to?.toString() || '' }
-                        onValueChange={ (e) => onSelectChange('assigned_to', e) }
-                    >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select User" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Existing User</SelectLabel>
-                                {users.map((user) => (
-                                    <SelectItem key={ user.id } value={ user.id.toString() }>
-                                        { user.first_name }
-                                    </SelectItem>
-                                ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                    <InputError message={ errors.assigned_to } />
+                    <SelectInput<User>
+                        label="Assign To"
+                        htmlFor="assigned_to"
+                        value={onData.assigned_to?.toString() || ''}
+                        onChange={(value) => onSelectChange('assigned_to', value)}
+                        placeholder="Select User"
+                        data={users}
+                        valueKey="id"
+                        displayKey="first_name"
+                        groupLabel="Existing User"
+                        error={errors.assigned_to}
+                        disabled={processing}
+                    />
                 </div>
             </div>
             <div className="grid w-full gap-3">
@@ -118,6 +115,7 @@ const FormInput = ({
                     onChange={ onInputTxtAreaChange }
                     placeholder="123 Main St."
                     className="h-20 shadow-md"
+                    disabled={ processing }
                 />
                 <InputError message={ errors.address } />
             </div>
@@ -130,6 +128,7 @@ const FormInput = ({
                     onChange={ onInputTxtAreaChange }
                     placeholder="Enter your notes here.." 
                     className="h-30 shadow-md"
+                    disabled={ processing }
                 />
                 <InputError message={ errors.notes } />
             </div>

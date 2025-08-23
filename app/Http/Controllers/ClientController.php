@@ -62,7 +62,7 @@ class ClientController extends Controller
 
         return Inertia::render('admin/client/client-form-page', [
             'users' => $users,
-            'client' => $client->load('assignedTo'),
+            'client' => $client,
         ]);
     }
 

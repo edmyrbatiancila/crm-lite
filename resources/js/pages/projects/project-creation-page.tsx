@@ -10,19 +10,12 @@ interface IPropjectCreationPageProps {
     project?: ProjectForm;
     users: UserProject[];
     clients: ClientProject[];
+    projectStatuses: { value: string; label: string }[];
     mode: string;
 }
 
-const ProjectCreationPage = ({ project, users, clients, mode }: IPropjectCreationPageProps) => {
+const ProjectCreationPage = ({ project, users, clients, projectStatuses, mode }: IPropjectCreationPageProps) => {
     useFlashMessages(); // Handle flash messages
-
-    const { data, setData, post, put, processing, errors, reset } = useForm({
-        id: project?.id ?? null,
-        name: project?.title ?? '',
-        description: project?.description ?? '',
-        client_id: project?.client_id ?? null,
-        user_id: project?.user_id ?? null
-    });
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -30,6 +23,45 @@ const ProjectCreationPage = ({ project, users, clients, mode }: IPropjectCreatio
             href: mode === 'create' ? '/projects/create' : `/projects/${project?.id}/edit`
         }
     ];
+
+    const { data, setData, post, put, processing, errors, reset } = useForm<Required<ProjectForm>>({
+        id: project?.id ?? null,
+        title: project?.title ?? '',
+        description: project?.description ?? '',
+        client_id: project?.client_id ?? null,
+        user_id: project?.user_id ?? null,
+        deadline_at: project?.deadline_at ?? '',
+        status: project?.status ?? ''
+
+    });
+
+    const handleSelectChange = (name: keyof ProjectForm, value: string) => {
+        if (name === 'user_id' || name === 'client_id') {
+            setData(name, Number(value));
+        } else {
+            setData(name, value);
+        }
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        if (mode === 'edit' && project?.id) {
+            put(route('projects.update', project.id), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    reset();
+                }
+            });
+        } else {
+            post(route('projects.store'), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    reset();
+                }
+            });
+        }
+    };
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
@@ -40,7 +72,15 @@ const ProjectCreationPage = ({ project, users, clients, mode }: IPropjectCreatio
                 formTitle="project"
             >
                 <ProjectFormInputs 
-                    errors={ errors }
+                    errors={errors}
+                    onData={data}
+                    users={users}
+                    clients={clients}
+                    projectStatuses={projectStatuses}
+                    onSelectChange={ handleSelectChange }
+                    processing={ processing }
+                    mode={ mode }
+                    onSubmit={ handleSubmit }
                 />
             </FormPageContent>
         </AppLayout>

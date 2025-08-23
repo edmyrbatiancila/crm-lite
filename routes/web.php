@@ -3,6 +3,7 @@
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -35,6 +36,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Project Page:
     Route::get('projects', [ProjectController::class, 'index'])->name('projects.index'); // index page for Projects.
     Route::get('projects/create', [ProjectController::class, 'create'])->name('projects.create'); // Page in creating new projects.
+    Route::post('projects/store', [ProjectController::class, 'store'])->name('projects.store'); // Store new Project.
+    Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit'); // Editing certain project.
+    Route::put('projects/{project}/update', [ProjectController::class, 'update'])->name('projects.update'); // Updating certain project.
+    Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy'); // deleting project.
+
+    // Task Page:
+    Route::get('tasks', [TaskController::class, 'index'])->name('tasks.index'); // index page for Tasks.
+    Route::get('tasks/create', [TaskController::class, 'create'])->name('tasks.create'); // Page in creating new task.
+    Route::post('tasks/store', [TaskController::class, 'store'])->name('tasks.store'); // Store new Task.
+    Route::get('tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit'); // Editing certain task.
+    Route::put('tasks/{task}/update', [TaskController::class, 'update'])->name('tasks.update'); // Updating certain task.
+    Route::delete('tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy'); // deleting task.
 
     // Leads Page:
     Route::get('leads', [LeadController::class, 'index'])->name('leads.index'); // index page for Leads.

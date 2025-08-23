@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ProjectStatus;
+use App\Enums\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateProjectRequest extends FormRequest
+class UpdateTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,13 @@ class UpdateProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required'],
-            'description' => ['required'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
             'user_id' => ['required', Rule::exists('users', 'id')],
             'client_id' => ['required', Rule::exists('clients', 'id')],
+            'project_id' => ['required', Rule::exists('projects', 'id')],
+            'status' => ['required', Rule::enum(TaskStatus::class)],
             'deadline_at' => ['required', 'date'],
-            'status' => ['required', Rule::enum(ProjectStatus::class)]
         ];
     }
 }

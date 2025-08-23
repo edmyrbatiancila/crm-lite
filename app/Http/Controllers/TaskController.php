@@ -3,25 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ModeStatus;
-use App\Enums\ProjectStatus;
-use App\Models\Project;
-use App\Http\Requests\StoreProjectRequest;
-use App\Http\Requests\UpdateProjectRequest;
+use App\Enums\TaskStatus;
+use App\Models\Task;
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Client;
+use App\Models\Project;
 use App\Models\User;
 use Inertia\Inertia;
 
-class ProjectController extends Controller
+class TaskController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $projects = Project::with(['user', 'client'])->latest()->paginate(10);
+        $tasks = Task::with(['user', 'client', 'project'])->latest()->paginate(10);
 
-        return Inertia::render('projects/project-page', [
-            'projects' => $projects
+        return Inertia::render('tasks/tasks-page', [
+            'tasks' => $tasks
         ]);
     }
 
@@ -32,38 +33,40 @@ class ProjectController extends Controller
     {
         $users = User::select(['id', 'first_name', 'last_name'])->get();
         $clients = Client::select(['id', 'name'])->get();
+        $projects = Project::select(['id', 'title'])->get();
         $mode = ModeStatus::CREATE;
 
-        // Get project statuses from enum
-        $projectStatuses = collect(ProjectStatus::cases())->map(function ($status) {
+        $taskStatuses = collect(TaskStatus::cases())->map(function ($status) {
             return [
                 'value' => $status->value,
                 'label' => ucfirst(str_replace('_', ' ', $status->value))
             ];
         });
 
-        return Inertia::render('projects/project-creation-page', [
+        return Inertia::render('tasks/tasks-creation-page', [
             'users' => $users,
             'clients' => $clients,
-            'projectStatuses' => $projectStatuses,
+            'projects' => $projects,
+            'taskStatuses' => $taskStatuses,
             'mode' => $mode
         ]);
+
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProjectRequest $request)
+    public function store(StoreTaskRequest $request)
     {
-        Project::create($request->validated());
+        Task::create($request->validated());
 
-        return redirect()->route('projects.index')->with('success', 'Project successfully created');
+        return redirect()->route('tasks.index')->with('success', 'Task successfully created');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Project $project)
+    public function show(Task $task)
     {
         //
     }
@@ -71,25 +74,26 @@ class ProjectController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Project $project)
+    public function edit(Task $task)
     {
         $users = User::select(['id', 'first_name', 'last_name'])->get();
         $clients = Client::select(['id', 'name'])->get();
+        $projects = Project::select(['id', 'title'])->get();
         $mode = ModeStatus::EDIT;
 
-        // Get project statuses from enum
-        $projectStatuses = collect(ProjectStatus::cases())->map(function ($status) {
+        $taskStatuses = collect(TaskStatus::cases())->map(function ($status) {
             return [
                 'value' => $status->value,
                 'label' => ucfirst(str_replace('_', ' ', $status->value))
             ];
         });
 
-        return Inertia::render('projects/project-creation-page', [
-            'project' => $project,
+        return Inertia::render('tasks/tasks-creation-page', [
+            'task' => $task,
             'users' => $users,
             'clients' => $clients,
-            'projectStatuses' => $projectStatuses,
+            'projects' => $projects,
+            'taskStatuses' => $taskStatuses,
             'mode' => $mode
         ]);
     }
@@ -97,20 +101,16 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProjectRequest $request, Project $project)
+    public function update(UpdateTaskRequest $request, Task $task)
     {
-        $project->update($request->validated());
-
-        return redirect()->route('projects.index')->with('success', 'Project successfully updated');
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Project $project)
+    public function destroy(Task $task)
     {
-        $project->delete();
-
-        return redirect()->route('projects.index')->with('success', 'Project successfully deleted');
+        //
     }
 }

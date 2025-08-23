@@ -2,9 +2,11 @@ import DataLists from "@/components/shared/data-lists";
 import PagePagination from "@/components/shared/page-pagination";
 import SetupContent from "@/components/shared/setup-content";
 import { projectColumns } from "@/constants/projects-table-columns";
+import { useFlashMessages } from "@/hooks/use-flash-messages";
 import AppLayout from "@/layouts/app-layout";
 import { Pagination } from "@/types/global";
-import { Projects } from "@/types/projects/IProject";
+import { projectBreadcrumbs, Projects } from "@/types/projects/IProject";
+import { router } from "@inertiajs/react";
 import { Rocket } from "lucide-react";
 
 interface IProjectPageProps {
@@ -12,19 +14,24 @@ interface IProjectPageProps {
 }
 
 const ProjectPage = ({ projects }: IProjectPageProps) => {
+    useFlashMessages(); // Handle flash messages
 
     const handleProjectDelete = (projectId: number | null) => {
-        console.log(projectId);
-        // TODO: Implement project deletion soon...
+        router.delete(route('projects.destroy', projectId?.toString()), {
+            preserveScroll: true,
+            onSuccess: () => {
+                console.log('project deleted');
+            }
+        });
     };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={ projectBreadcrumbs }>
             <SetupContent<Projects> 
                 headTitle="Projects"
                 onData={ projects.data }
                 onDelete={ handleProjectDelete }
-                setupDescription="Manage your projects and tasks efficiently."
+                setupDescription="Manage your projects efficiently."
                 buttonTitle="New Project"
                 createRoute="projects.create"
                 renderList={ ((onData, onDelete) => (

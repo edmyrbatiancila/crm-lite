@@ -1,3 +1,4 @@
+import { BreadcrumbItem } from "..";
 
 export interface ProjectStatus {
     id: number | null;
@@ -32,3 +33,10 @@ export interface ClientProject {
     id: number;
     name: string;
 }
+
+export const projectBreadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Projects',
+        href: '/projects'
+    }
+];
