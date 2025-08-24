@@ -18,7 +18,6 @@ export const userColumns = (
     if (canEdit || canDelete) {
         columns.push({
             label: "Actions",
-            className: 'text-right',
             render: (u) => (
                 <ActionButtons 
                     editRoute="users.edit"

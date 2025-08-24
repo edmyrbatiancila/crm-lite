@@ -30,7 +30,6 @@ export const clientColumns = (
     if (canEdit || canDelete) {
         columns.push({
             label: "Actions",
-            className: "text-right",
             render: (c) => (
                 <ActionButtons 
                     editRoute="clients.edit"

@@ -52,7 +52,6 @@ export const projectColumns = (
     if (canEdit || canDelete) {
         columns.push({
             label: "Actions",
-            className: "text-right min-w-[100px] w-[120px]",
             render: (c) => (
                 <ActionButtons 
                     editRoute="projects.edit"
