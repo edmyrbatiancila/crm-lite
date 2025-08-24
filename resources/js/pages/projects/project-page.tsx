@@ -3,6 +3,8 @@ import PagePagination from "@/components/shared/page-pagination";
 import SetupContent from "@/components/shared/setup-content";
 import { projectColumns } from "@/constants/projects-table-columns";
 import { useFlashMessages } from "@/hooks/use-flash-messages";
+import { useAuth } from "@/hooks/use-auth";
+import { PermissionEnum } from "@/enums/RoleEnum";
 import AppLayout from "@/layouts/app-layout";
 import { Pagination } from "@/types/global";
 import { projectBreadcrumbs, Projects } from "@/types/projects/IProject";
@@ -15,6 +17,7 @@ interface IProjectPageProps {
 
 const ProjectPage = ({ projects }: IProjectPageProps) => {
     useFlashMessages(); // Handle flash messages
+    const { hasPermission, canManageProjects } = useAuth();
 
     const handleProjectDelete = (projectId: number | null) => {
         router.delete(route('projects.destroy', projectId?.toString()), {
@@ -24,6 +27,10 @@ const ProjectPage = ({ projects }: IProjectPageProps) => {
             }
         });
     };
+
+    // Check permissions for edit and delete actions
+    const canEdit = hasPermission(PermissionEnum.EDIT_PROJECTS) || canManageProjects;
+    const canDelete = hasPermission(PermissionEnum.DELETE_PROJECTS) || canManageProjects;
 
     return (
         <AppLayout breadcrumbs={ projectBreadcrumbs }>
@@ -38,7 +45,7 @@ const ProjectPage = ({ projects }: IProjectPageProps) => {
                     <DataLists<Projects>
                         keyExtractor={ (project) => project.id }
                         data={ onData }
-                        columns={ projectColumns(onDelete) }
+                        columns={ projectColumns(onDelete, canEdit, canDelete) }
                     />
                 )) }
                 emptyTitle="No Projects"

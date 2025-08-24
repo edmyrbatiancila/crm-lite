@@ -25,6 +25,20 @@ export enum PermissionEnum {
     EDIT_CLIENTS = 'edit clients',
     DELETE_CLIENTS = 'delete clients',
 
+    // Project permissions
+    MANAGE_PROJECTS = 'manage projects',
+    VIEW_PROJECTS = 'view projects',
+    CREATE_PROJECTS = 'create projects',
+    EDIT_PROJECTS = 'edit projects',
+    DELETE_PROJECTS = 'delete projects',
+
+    // Task permissions
+    MANAGE_TASKS = 'manage tasks',
+    VIEW_TASKS = 'view tasks',
+    CREATE_TASKS = 'create tasks',
+    EDIT_TASKS = 'edit tasks',
+    DELETE_TASKS = 'delete tasks',
+
     // Lead permissions
     MANAGE_LEADS = 'manage leads',
     VIEW_LEADS = 'view leads',

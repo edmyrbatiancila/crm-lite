@@ -138,3 +138,62 @@
         @apply bg-background text-foreground;
     }
 }
+
+@layer utilities {
+    .line-clamp-3 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        line-height: 1.5;
+    }
+    
+    .line-clamp-2 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        line-height: 1.5;
+    }
+    
+    /* Custom scrollbar styles for tables */
+    .overflow-x-auto {
+        scrollbar-width: thin;
+        scrollbar-color: rgb(203 213 225) transparent;
+    }
+    
+    .dark .overflow-x-auto {
+        scrollbar-color: rgb(75 85 99) transparent;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-track {
+        background: rgb(248 250 252);
+        border-radius: 3px;
+    }
+    
+    .dark .overflow-x-auto::-webkit-scrollbar-track {
+        background: rgb(31 41 55);
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-thumb {
+        background: rgb(203 213 225);
+        border-radius: 3px;
+    }
+    
+    .dark .overflow-x-auto::-webkit-scrollbar-thumb {
+        background: rgb(75 85 99);
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+        background: rgb(148 163 184);
+    }
+    
+    .dark .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+        background: rgb(107 114 128);
+    }
+}

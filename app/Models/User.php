@@ -54,16 +54,26 @@ class User extends Authenticatable
      */
     public function canManageUsers(): bool
     {
-        return $this->hasAnyPermission(['manage users', 'create users', 'edit users', 'delete users']);
+        return $this->hasAnyPermission(['manage users', 'edit users', 'delete users']);
     }
 
     public function canManageClients(): bool
     {
-        return $this->hasAnyPermission(['manage clients', 'create clients', 'edit clients', 'delete clients']);
+        return $this->hasAnyPermission(['manage clients', 'edit clients', 'delete clients']);
+    }
+
+    public function canManageProjects(): bool
+    {
+        return $this->hasAnyPermission(['manage projects', 'edit projects', 'delete projects']);
+    }
+
+    public function canManageTasks(): bool
+    {
+        return $this->hasAnyPermission(['manage tasks', 'edit tasks', 'delete tasks']);
     }
 
     public function canManageLeads(): bool
     {
-        return $this->hasAnyPermission(['manage leads', 'create leads', 'edit leads', 'delete leads']);
+        return $this->hasAnyPermission(['manage leads', 'edit leads', 'delete leads']);
     }
 }

@@ -103,7 +103,9 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        //
+        $task->update($request->validated());
+
+        return redirect()->route('tasks.index')->with('success', 'Task successfully updated');
     }
 
     /**
@@ -111,6 +113,8 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $task->delete();
+
+        return redirect()->route('tasks.index')->with('success', 'Task successfully deleted');
     }
 }

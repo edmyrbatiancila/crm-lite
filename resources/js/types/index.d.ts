@@ -44,6 +44,8 @@ export interface User {
     permissions?: string[];
     can_manage_users?: boolean;
     can_manage_clients?: boolean;
+    can_manage_projects?: boolean;
+    can_manage_tasks?: boolean;
     can_manage_leads?: boolean;
     [key: string]: unknown; // This allows for additional properties...
 }

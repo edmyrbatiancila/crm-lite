@@ -53,6 +53,8 @@ class HandleInertiaRequests extends Middleware
                     'permissions' => $request->user()->getAllPermissions()->pluck('name'),
                     'can_manage_users' => $request->user()->canManageUsers(),
                     'can_manage_clients' => $request->user()->canManageClients(),
+                    'can_manage_projects' => $request->user()->canManageProjects(),
+                    'can_manage_tasks' => $request->user()->canManageTasks(),
                     'can_manage_leads' => $request->user()->canManageLeads(),
                 ] : null,
             ],

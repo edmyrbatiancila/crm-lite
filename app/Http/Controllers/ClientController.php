@@ -5,16 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ClientRequest;
 use App\Models\Client;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ClientController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $this->authorize('viewAny', Client::class);
+        
         $clients = Client::with(['leads', 'contacts', 'assignedTo'])->latest()->paginate(10);
 
         return Inertia::render('admin/client/client-page', [
@@ -27,6 +31,8 @@ class ClientController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Client::class);
+        
         $users = User::select('id', 'first_name')->get();
 
         return Inertia::render('admin/client/client-form-page', [
@@ -39,6 +45,7 @@ class ClientController extends Controller
      */
     public function store(ClientRequest $request, Client $client)
     {
+        $this->authorize('create', Client::class);
 
         Client::create($request->validated());
 
@@ -58,6 +65,8 @@ class ClientController extends Controller
      */
     public function edit(Client $client)
     {
+        $this->authorize('update', $client);
+        
         $users = User::select('id', 'first_name')->get();
 
         return Inertia::render('admin/client/client-form-page', [
@@ -71,6 +80,7 @@ class ClientController extends Controller
      */
     public function update(ClientRequest $request, Client $client)
     {
+        $this->authorize('update', $client);
 
         $client->update($request->validated());
 
@@ -82,6 +92,8 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
+        $this->authorize('delete', $client);
+        
         $client->delete();
 
         return redirect()->route('clients.index')->with('success', 'Client successfully deleted');

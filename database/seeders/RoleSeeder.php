@@ -34,6 +34,20 @@ class RoleSeeder extends Seeder
             'edit clients',
             'delete clients',
 
+            // Project permissions
+            'manage projects',
+            'view projects',
+            'create projects',
+            'edit projects',
+            'delete projects',
+
+            // Task permissions
+            'manage tasks',
+            'view tasks',
+            'create tasks',
+            'edit tasks',
+            'delete tasks',
+
             // Lead permissions
             'manage leads',
             'view leads',
@@ -43,15 +57,24 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
         // Create admin role and assign all permissions
-        $adminRole = Role::create(['name' => RoleEnum::ADMIN]);
-        $adminRole->givePermissionTo($permissions);
+        $adminRole = Role::firstOrCreate(['name' => RoleEnum::ADMIN]);
+        $adminRole->syncPermissions($permissions);
 
         // Create user role with limited permissions
-        $userRole = Role::create(['name' => RoleEnum::USER]);
-        $userRole->givePermissionTo(['view clients', 'view leads']);
+        $userRole = Role::firstOrCreate(['name' => RoleEnum::USER]);
+        $userRole->syncPermissions([
+            'view clients', 
+            'create clients',
+            'view projects',
+            'create projects', 
+            'view tasks',
+            'create tasks',
+            'view leads',
+            'create leads'
+        ]);
     }
 }

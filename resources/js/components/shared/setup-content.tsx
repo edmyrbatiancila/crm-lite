@@ -36,7 +36,7 @@ const SetupContent = <T,> ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="space-y-6 p-4"
+                className="space-y-6 p-4 pb-20"
             >
             {onData.length > 0 ? (
                 <>

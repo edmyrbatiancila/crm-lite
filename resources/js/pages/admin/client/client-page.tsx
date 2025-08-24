@@ -3,6 +3,8 @@ import DataLists from "@/components/shared/data-lists";
 import PagePagination from "@/components/shared/page-pagination";
 import SetupContent from "@/components/shared/setup-content";
 import { clientColumns } from "@/constants/clients-table-columns";
+import { useAuth } from "@/hooks/use-auth";
+import { PermissionEnum } from "@/enums/RoleEnum";
 import AppLayout from "@/layouts/app-layout";
 import { showSuccess } from "@/lib/alert";
 import { clientBreadcrumbs, Clients } from "@/types/clients/IClients";
@@ -23,6 +25,7 @@ interface IClientPageProps {
 // ];
 
 const ClientPage = ({ clients }: IClientPageProps) => {
+    const { hasPermission, canManageClients } = useAuth();
 
     console.log(clients);
 
@@ -35,6 +38,10 @@ const ClientPage = ({ clients }: IClientPageProps) => {
             }
         });
     };
+
+    // Check permissions for edit and delete actions
+    const canEdit = hasPermission(PermissionEnum.EDIT_CLIENTS) || canManageClients;
+    const canDelete = hasPermission(PermissionEnum.DELETE_CLIENTS) || canManageClients;
 
     return (
         <AppLayout breadcrumbs={ clientBreadcrumbs }>
@@ -49,7 +56,7 @@ const ClientPage = ({ clients }: IClientPageProps) => {
                     <DataLists<Clients> 
                         keyExtractor={ (client) => client.id }
                         data={ onData }
-                        columns={ clientColumns(onDelete) }
+                        columns={ clientColumns(onDelete, canEdit, canDelete) }
                     />
                 )) }
                 emptyTitle="No Clients"

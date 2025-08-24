@@ -9,6 +9,8 @@ import { userBreadcrumbs } from "@/types/users/IUsers";
 import { router } from "@inertiajs/react";
 import { UserPlusIcon } from "lucide-react";
 import { useFlashMessages } from "@/hooks/use-flash-messages";
+import { useAuth } from "@/hooks/use-auth";
+import { PermissionEnum } from "@/enums/RoleEnum";
 
 interface IUsersPageProps {
     users: Pagination<User>;
@@ -25,6 +27,11 @@ const handleDelete = (userId: number | null) => {
 
 export default function UsersPage({ users }: IUsersPageProps) {
     useFlashMessages(); // Handle flash messages
+    const { hasPermission, canManageUsers } = useAuth();
+
+    // Check permissions for edit and delete actions
+    const canEdit = hasPermission(PermissionEnum.EDIT_USERS) || canManageUsers;
+    const canDelete = hasPermission(PermissionEnum.DELETE_USERS) || canManageUsers;
 
     console.log(users);
 
@@ -41,7 +48,7 @@ export default function UsersPage({ users }: IUsersPageProps) {
                     <DataLists<User>
                         keyExtractor={ (user) => user.id }
                         data={ onData }
-                        columns={ userColumns(onDelete) }
+                        columns={ userColumns(onDelete, canEdit, canDelete) }
                     />
                 )) }
                 emptyTitle="No Users"

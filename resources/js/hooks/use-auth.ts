@@ -10,6 +10,8 @@ interface UseAuthReturn {
     hasAnyPermission: (permissions: (PermissionEnum | string)[]) => boolean;
     canManageUsers: boolean;
     canManageClients: boolean;
+    canManageProjects: boolean;
+    canManageTasks: boolean;
     canManageLeads: boolean;
     isAuthenticated: boolean;
     isAdmin: boolean;
@@ -50,6 +52,8 @@ export function useAuth(): UseAuthReturn {
         hasAnyPermission,
         canManageUsers: user?.can_manage_users ?? false,
         canManageClients: user?.can_manage_clients ?? false,
+        canManageProjects: user?.can_manage_projects ?? false,
+        canManageTasks: user?.can_manage_tasks ?? false,
         canManageLeads: user?.can_manage_leads ?? false,
         isAuthenticated: !!user,
         isAdmin,
