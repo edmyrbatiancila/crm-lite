@@ -14,7 +14,7 @@ const PagePagination = ({ links }: IPagePagination) => {
     const nextLink = links.find((l) => l.label === "Next &raquo;");
 
     return (
-        <div className="fixed bottom-0 left-0 w-full border-t dark:border-gray-700 shadow-sm p-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
+        <div className="sticky bottom-0 left-0w-full border-t dark:border-gray-700 shadow-sm py-4 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm mt-auto z-[1]">
             <Pagination>
                 <PaginationContent className="flex justify-center">
                     {/* Previous */}

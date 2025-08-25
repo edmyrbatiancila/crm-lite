@@ -5,24 +5,70 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ClientRequest;
 use App\Models\Client;
 use App\Models\User;
+use App\Traits\HasSearchAndFilter;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ClientController extends Controller
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests, HasSearchAndFilter;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Client::class);
         
-        $clients = Client::with(['leads', 'contacts', 'assignedTo'])->latest()->paginate(10);
+        $query = Client::with(['leads', 'contacts', 'assignedTo']);
+
+        // Define searchable fields
+        $searchableFields = ['name', 'email', 'phone', 'mobile_no'];
+
+        // Define filterable fields with their types
+        $filterableFields = [
+            'status' => ['type' => 'exact'],
+            'industry' => ['type' => 'exact'],
+            'company_size' => ['type' => 'exact'],
+            'assignedTo.first_name' => ['type' => 'like'],
+            'created_at' => ['type' => 'date'],
+        ];
+
+        // Define sortable fields
+        $sortableFields = [
+            'name', 
+            'email', 
+            'phone', 
+            'mobile_no',
+            'created_at', 
+            'updated_at',
+            'assignedTo.first_name'
+        ];
+
+        // Apply search, filter, and sort
+        $query = $this->applySearchAndFilter(
+            $query, 
+            $request, 
+            $searchableFields, 
+            $filterableFields, 
+            $sortableFields
+        );
+
+        // Paginate results
+        $clients = $query->paginate($request->input('per_page', 10));
+
+        // Append query parameters to pagination links
+        $clients->appends($request->query());
 
         return Inertia::render('admin/client/client-page', [
-            'clients' => $clients
+            'clients' => $clients,
+            'filters' => [
+                'search' => $request->input('search'),
+                'filter' => $request->input('filter', []),
+                'sort_by' => $request->input('sort_by', 'created_at'),
+                'sort_direction' => $request->input('sort_direction', 'desc'),
+            ]
         ]);
     }
 

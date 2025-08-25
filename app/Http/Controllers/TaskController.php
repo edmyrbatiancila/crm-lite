@@ -10,19 +10,75 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Client;
 use App\Models\Project;
 use App\Models\User;
+use App\Traits\HasSearchAndFilter;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class TaskController extends Controller
 {
+    use HasSearchAndFilter;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = Task::with(['user', 'client', 'project'])->latest()->paginate(10);
+        $query = Task::with(['user', 'client', 'project']);
+
+        // Define searchable fields
+        $searchableFields = ['title', 'description'];
+
+        // Define filterable fields with their types
+        $filterableFields = [
+            'status' => ['type' => 'exact'],
+            'priority' => ['type' => 'exact'],
+            'category' => ['type' => 'exact'],
+            'due_date' => ['type' => 'date'],
+            'completed_at' => ['type' => 'date'],
+            'user.first_name' => ['type' => 'like'],
+            'client.name' => ['type' => 'like'],
+            'project.name' => ['type' => 'like'],
+            'created_at' => ['type' => 'date'],
+        ];
+
+        // Define sortable fields
+        $sortableFields = [
+            'title', 
+            'status',
+            'priority',
+            'category',
+            'due_date',
+            'completed_at',
+            'created_at', 
+            'updated_at',
+            'user.first_name',
+            'client.name',
+            'project.name'
+        ];
+
+        // Apply search, filter, and sort
+        $query = $this->applySearchAndFilter(
+            $query, 
+            $request, 
+            $searchableFields, 
+            $filterableFields, 
+            $sortableFields
+        );
+
+        // Paginate results
+        $tasks = $query->paginate($request->input('per_page', 10));
+
+        // Append query parameters to pagination links
+        $tasks->appends($request->query());
 
         return Inertia::render('tasks/tasks-page', [
-            'tasks' => $tasks
+            'tasks' => $tasks,
+            'filters' => [
+                'search' => $request->input('search'),
+                'filter' => $request->input('filter', []),
+                'sort_by' => $request->input('sort_by', 'created_at'),
+                'sort_direction' => $request->input('sort_direction', 'desc'),
+            ]
         ]);
     }
 

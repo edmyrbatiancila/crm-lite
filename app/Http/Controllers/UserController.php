@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use App\Traits\HasSearchAndFilter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -13,18 +14,62 @@ use Inertia\Inertia;
 
 class UserController extends Controller
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests, HasSearchAndFilter;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', User::class);
         
-        $users = User::latest()->paginate(10);
+        $query = User::query();
+
+        // Define searchable fields
+        $searchableFields = ['first_name', 'last_name', 'email'];
+
+        // Define filterable fields with their types
+        $filterableFields = [
+            'role' => ['type' => 'exact'],
+            'status' => ['type' => 'exact'],
+            'created_at' => ['type' => 'date'],
+            'department' => ['type' => 'like'],
+            'email_verified_at' => ['type' => 'boolean'],
+        ];
+
+        // Define sortable fields
+        $sortableFields = [
+            'first_name', 
+            'last_name', 
+            'email', 
+            'created_at', 
+            'updated_at',
+            'email_verified_at'
+        ];
+
+        // Apply search, filter, and sort
+        $query = $this->applySearchAndFilter(
+            $query, 
+            $request, 
+            $searchableFields, 
+            $filterableFields, 
+            $sortableFields
+        );
+
+        // Paginate results
+        $users = $query->paginate($request->input('per_page', 10));
+
+        // Append query parameters to pagination links
+        $users->appends($request->query());
 
         return Inertia::render('users/users-page', [
-            'users' => $users
+            'users' => $users,
+            'filters' => [
+                'search' => $request->input('search'),
+                'filter' => $request->input('filter', []),
+                'sort_by' => $request->input('sort_by', 'created_at'),
+                'sort_direction' => $request->input('sort_direction', 'desc'),
+            ]
         ]);
     }
 

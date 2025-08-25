@@ -9,8 +9,8 @@ export function NavMain() {
 
     // Filter navigation items based on permissions
     const filteredNavItems = mainNavItems.filter(item => {
-        // Only show Users page to admin users
-        if (item.href === '/users') {
+        // Only show Users and Activity Logs pages to admin users
+        if (item.href === '/users' || item.href === '/admin/activity-logs') {
             return isAdmin;
         }
         // All other pages are visible to both admin and regular users

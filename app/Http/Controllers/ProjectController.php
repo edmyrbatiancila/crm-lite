@@ -9,19 +9,73 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Client;
 use App\Models\User;
+use App\Traits\HasSearchAndFilter;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
 {
+    use HasSearchAndFilter;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $projects = Project::with(['user', 'client'])->latest()->paginate(10);
+        $query = Project::with(['user', 'client']);
+
+        // Define searchable fields
+        $searchableFields = ['name', 'description'];
+
+        // Define filterable fields with their types
+        $filterableFields = [
+            'status' => ['type' => 'exact'],
+            'priority' => ['type' => 'exact'],
+            'budget' => ['type' => 'range'],
+            'start_date' => ['type' => 'date'],
+            'end_date' => ['type' => 'date'],
+            'user.first_name' => ['type' => 'like'],
+            'client.name' => ['type' => 'like'],
+            'created_at' => ['type' => 'date'],
+        ];
+
+        // Define sortable fields
+        $sortableFields = [
+            'name', 
+            'status',
+            'priority',
+            'budget',
+            'start_date',
+            'end_date',
+            'created_at', 
+            'updated_at',
+            'user.first_name',
+            'client.name'
+        ];
+
+        // Apply search, filter, and sort
+        $query = $this->applySearchAndFilter(
+            $query, 
+            $request, 
+            $searchableFields, 
+            $filterableFields, 
+            $sortableFields
+        );
+
+        // Paginate results
+        $projects = $query->paginate($request->input('per_page', 10));
+
+        // Append query parameters to pagination links
+        $projects->appends($request->query());
 
         return Inertia::render('projects/project-page', [
-            'projects' => $projects
+            'projects' => $projects,
+            'filters' => [
+                'search' => $request->input('search'),
+                'filter' => $request->input('filter', []),
+                'sort_by' => $request->input('sort_by', 'created_at'),
+                'sort_direction' => $request->input('sort_direction', 'desc'),
+            ]
         ]);
     }
 

@@ -24,7 +24,7 @@ export function AppSidebar() {
                 <NavMain />
             </SidebarContent>
 
-            <SidebarFooter>
+            <SidebarFooter className="relative z-20">
                 <NavFooter className="mt-auto" />
                 <NavUser />
             </SidebarFooter>

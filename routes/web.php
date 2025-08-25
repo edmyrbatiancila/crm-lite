@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\ProjectController;
@@ -52,6 +53,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Leads Page:
     Route::get('leads', [LeadController::class, 'index'])->name('leads.index'); // index page for Leads.
     Route::get('leads/create', [LeadController::class, 'create'])->name('leads.create'); // Page in creating new leads.
+
+    // Activity Logs Page:
+    Route::get('admin/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index'); // index page for Activity Logs.
 });
 
 require __DIR__.'/settings.php';

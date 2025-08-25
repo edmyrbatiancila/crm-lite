@@ -3,10 +3,12 @@ import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import EmptyState from "./empty-state";
+import NoResults from "./no-results";
 
 interface ISetupContentProps<T> {
     headTitle: string;
     onData: T[];
+    originalDataLength?: number; // To distinguish between no data and filtered results
     setupDescription: string;
     onDelete: (id: number | null) => void;
     buttonTitle: string;
@@ -15,11 +17,14 @@ interface ISetupContentProps<T> {
     emptyTitle: string;
     emptyDescription: string;
     emptyHeadIcon: React.ReactNode;
+    onResetFilters?: () => void; // Function to reset filters
+    hasActiveFilters?: boolean; // Whether filters are currently applied
 }
 
 const SetupContent = <T,> ({
     headTitle, 
     onData, 
+    originalDataLength = 0,
     onDelete,
     setupDescription,
     buttonTitle,
@@ -28,7 +33,11 @@ const SetupContent = <T,> ({
     emptyTitle,
     emptyDescription,
     emptyHeadIcon,
+    onResetFilters,
+    hasActiveFilters = false,
 }: ISetupContentProps<T>) => {
+    const isFiltered = hasActiveFilters && originalDataLength > 0;
+    
     return (
         <>
             <Head title={ headTitle } />
@@ -59,14 +68,23 @@ const SetupContent = <T,> ({
                     { renderList(onData, onDelete) }
                 </>
             ) : (
-                <EmptyState 
-                    headIcon={ emptyHeadIcon }
-                    title={ emptyTitle }
-                    description={ emptyDescription }
-                    // buttonIcon={ emptyButtonIcon }
-                    buttonTitle={ buttonTitle }
-                    onCreateRoute={ createRoute }
-                />
+                <>
+                    {isFiltered ? (
+                        <NoResults
+                            title="No results found"
+                            description="No items match your current search and filter criteria. Try adjusting your filters or search terms."
+                            onReset={onResetFilters}
+                        />
+                    ) : (
+                        <EmptyState 
+                            headIcon={ emptyHeadIcon }
+                            title={ emptyTitle }
+                            description={ emptyDescription }
+                            buttonTitle={ buttonTitle }
+                            onCreateRoute={ createRoute }
+                        />
+                    )}
+                </>
             )}
             </motion.div>
         </>
