@@ -1,7 +1,17 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Head } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
+import { ClientStats } from '@/components/dashboard/ClientStats';
+import { ProjectStats } from '@/components/dashboard/ProjectStats';
+import { TaskStats } from '@/components/dashboard/TaskStats';
+import { UserStats } from '@/components/dashboard/UserStats';
+import { OverviewTrends } from '@/components/dashboard/OverviewTrends';
+import { type BreadcrumbItem } from '@/types';
+import { BarChart3, Calendar } from 'lucide-react';
+import { DashboardMonthlyData } from '@/types/dashboard/IDashboard';
+import { containerVariants } from '@/lib/animationVariants';
+import { TaskChartStatus } from '@/types/tasks/ITasks';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -10,26 +20,126 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard() {
+interface DashboardProps {
+    stats: {
+        clients: {
+            total: number;
+            newThisMonth: number;
+            previousMonth: number;
+        };
+        projects: {
+            total: number;
+            ongoing: number;
+            completed: number;
+            pending: number;
+        };
+        tasks: TaskChartStatus;
+        users: {
+            total: number;
+            active: number;
+            inactive: number;
+        };
+    };
+    monthlyData: DashboardMonthlyData[];
+}
+
+export default function Dashboard({ stats, monthlyData }: DashboardProps) {
+
+    const getCurrentMonth = () => {
+        return new Date().toLocaleDateString('en-US', { 
+            month: 'long', 
+            year: 'numeric' 
+        });
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+            
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="space-y-8 p-6"
+            >
+                {/* Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="space-y-4"
+                >
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+                                <BarChart3 className="h-8 w-8 text-primary" />
+                                Dashboard
+                            </h1>
+                            <p className="text-muted-foreground flex items-center gap-2 mt-2">
+                                <Calendar className="h-4 w-4" />
+                                Overview for { getCurrentMonth() }
+                            </p>
+                        </div>
                     </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
+                </motion.div>
+
+                {/* Overview Trends */}
+                <OverviewTrends monthlyData={monthlyData} />
+
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    {/* Client Stats */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                    >
+                        <div className="space-y-4">
+                            <h2 className="text-xl font-semibold text-foreground">Client Analytics</h2>
+                            <ClientStats 
+                                stats={stats.clients} 
+                                monthlyData={monthlyData.map(d => ({ month: d.month, clients: d.clients }))} 
+                            />
+                        </div>
+                    </motion.div>
+
+                    {/* Project Stats */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                    >
+                        <div className="space-y-4">
+                            <h2 className="text-xl font-semibold text-foreground">Project Overview</h2>
+                            <ProjectStats stats={stats.projects} />
+                        </div>
+                    </motion.div>
                 </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                </div>
-            </div>
+
+                {/* Task Stats - Full Width */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                    <div className="space-y-4">
+                        <h2 className="text-xl font-semibold text-foreground">Task Management</h2>
+                        <TaskStats stats={stats.tasks} />
+                    </div>
+                </motion.div>
+
+                {/* User Stats */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                    <div className="space-y-4">
+                        <h2 className="text-xl font-semibold text-foreground">User Engagement</h2>
+                        <UserStats stats={stats.users} />
+                    </div>
+                </motion.div>
+            </motion.div>
         </AppLayout>
     );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { Clock, User, FileText, Calendar, Database } from 'lucide-react';
+import { Clock, Database } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,52 +11,15 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import SearchAndFilter from '@/components/shared/search-and-filter';
 import { useSearchAndFilter } from '@/hooks/use-search-and-filter';
 import { activityLogFilterOptions, activityLogSortOptions } from '@/config/filters/activity-log-filters';
+import { Activities, ActivityFilters, ActivityLog } from '@/types/activity-log/IActivityLog';
+import { getEventColor, getSubjectIcon } from '@/hooks/activity-logs/activity-logs-hooks';
 
-interface ActivityLog {
-    id: number;
-    description: string;
-    log_name: string;
-    event: string;
-    subject_type: string;
-    subject_id: number | null;
-    causer_type: string | null;
-    causer_id: number | null;
-    properties: Record<string, unknown>;
-    created_at: string;
-    updated_at: string;
-    causer: {
-        id: number;
-        name: string;
-        email: string;
-    } | null;
-    subject: Record<string, unknown> | null;
-    human_readable: string;
+interface IActivityLogsPageProps {
+    activities: Activities;
+    filters: ActivityFilters;
 }
 
-interface Props {
-    activities: {
-        data: ActivityLog[];
-        current_page: number;
-        last_page: number;
-        per_page: number;
-        total: number;
-        from: number;
-        to: number;
-        links: Array<{
-        url: string | null;
-        label: string;
-        active: boolean;
-        }>;
-    };
-    filters: {
-        search: string;
-        filter: Record<string, unknown>;
-        sort_by: string;
-        sort_direction: 'asc' | 'desc';
-    };
-}
-
-const ActivityLogsPage: React.FC<Props> = ({ activities, filters }) => {
+const ActivityLogsPage = ({ activities, filters }: IActivityLogsPageProps) => {
     const {
         searchValue,
         activeFilters,
@@ -73,36 +36,6 @@ const ActivityLogsPage: React.FC<Props> = ({ activities, filters }) => {
         initialSort: filters.sort_by || 'created_at',
         initialSortDirection: filters.sort_direction || 'desc',
     });
-
-    const getEventColor = (event: string) => {
-        switch (event) {
-            case 'created':
-                return 'bg-green-100 text-green-800 border-green-200';
-            case 'updated':
-                return 'bg-blue-100 text-blue-800 border-blue-200';
-            case 'deleted':
-                return 'bg-red-100 text-red-800 border-red-200';
-            case 'restored':
-                return 'bg-purple-100 text-purple-800 border-purple-200';
-            default:
-                return 'bg-gray-100 text-gray-800 border-gray-200';
-        }
-    };
-
-    const getSubjectIcon = (subjectType: string) => {
-        switch (subjectType) {
-            case 'App\\Models\\User':
-                return <User className="h-4 w-4" />;
-            case 'App\\Models\\Client':
-                return <FileText className="h-4 w-4" />;
-            case 'App\\Models\\Project':
-                return <Database className="h-4 w-4" />;
-            case 'App\\Models\\Task':
-                return <Calendar className="h-4 w-4" />;
-            default:
-                return <FileText className="h-4 w-4" />;
-        }
-    };
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleString();

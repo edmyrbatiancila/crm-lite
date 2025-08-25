@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
@@ -14,9 +15,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Users Page:
     Route::get('/users', [UserController::class, 'index'])->name('users.index'); // Index page for Users.
@@ -55,7 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('leads/create', [LeadController::class, 'create'])->name('leads.create'); // Page in creating new leads.
 
     // Activity Logs Page:
-    Route::get('admin/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index'); // index page for Activity Logs.
+    Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index'); // index page for Activity Logs.
 });
 
 require __DIR__.'/settings.php';

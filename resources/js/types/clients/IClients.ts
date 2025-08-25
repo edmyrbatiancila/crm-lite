@@ -34,3 +34,14 @@ export const clientBreadcrumbs: BreadcrumbItem[] = [
         href: '/clients' 
     }
 ];
+
+export interface ClientChartStatus {
+    total: number;
+    newThisMonth: number;
+    previousMonth: number;
+};
+
+export interface ClientChartMonthlyData {
+    month: string;
+    clients: number;
+}

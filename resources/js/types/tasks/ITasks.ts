@@ -19,6 +19,15 @@ export interface TaskForm {
     status: string;
 }
 
+export interface TaskChartStatus {
+    open: number;
+    in_progress: number;
+    pending: number;
+    waiting_client: number;
+    blocked: number;
+    closed: number;
+}
+
 export const taskBreadcrumbs: BreadcrumbItem[] = [
     {
         title: "Tasks",

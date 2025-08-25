@@ -40,7 +40,7 @@ export const mainNavItems: NavItem[] = [
     },
     {
         title: 'Activity Logs',
-        href: '/admin/activity-logs',
+        href: '/activity-logs',
         icon: Activity,
     }
 ];
@@ -57,3 +57,4 @@ export const footerNavItems: NavItem[] = [
         icon: BookOpen,
     },
 ];
+
