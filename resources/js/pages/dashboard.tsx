@@ -9,9 +9,6 @@ import { UserStats } from '@/components/dashboard/UserStats';
 import { OverviewTrends } from '@/components/dashboard/OverviewTrends';
 import { type BreadcrumbItem } from '@/types';
 import { BarChart3, Calendar } from 'lucide-react';
-import { DashboardMonthlyData } from '@/types/dashboard/IDashboard';
-import { containerVariants } from '@/lib/animationVariants';
-import { TaskChartStatus } from '@/types/tasks/ITasks';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -33,17 +30,40 @@ interface DashboardProps {
             completed: number;
             pending: number;
         };
-        tasks: TaskChartStatus;
+        tasks: {
+            pending: number;
+            in_progress: number;
+            completed: number;
+            on_hold: number;
+            cancelled: number;
+        };
         users: {
             total: number;
             active: number;
             inactive: number;
         };
     };
-    monthlyData: DashboardMonthlyData[];
+    monthlyData: Array<{
+        month: string;
+        fullMonth: string;
+        clients: number;
+        projects: number;
+        tasks: number;
+        users: number;
+    }>;
 }
 
 export default function Dashboard({ stats, monthlyData }: DashboardProps) {
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                duration: 0.6,
+                staggerChildren: 0.1
+            }
+        }
+    };
 
     const getCurrentMonth = () => {
         return new Date().toLocaleDateString('en-US', { 

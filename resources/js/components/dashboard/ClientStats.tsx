@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis } from 'recharts';
 import { Users, UserPlus, TrendingUp } from 'lucide-react';
 import { ClientChartMonthlyData, ClientChartStatus } from '@/types/clients/IClients';
 
@@ -14,7 +14,7 @@ interface ClientStatsProps {
 const clientChartConfig = {
     clients: {
         label: "New Clients",
-        color: "#3B82F6", // Bright blue
+        color: "hsl(var(--chart-1))",
     },
 } satisfies ChartConfig;
 
@@ -116,32 +116,6 @@ export function ClientStats({ stats, monthlyData }: ClientStatsProps) {
                                     bottom: 5,
                                 }}
                             >
-                                <defs>
-                                    <linearGradient 
-                                        id="clientGradient" 
-                                        x1="0" 
-                                        y1="0" 
-                                        x2="0" 
-                                        y2="1"
-                                    >
-                                        <stop 
-                                            offset="0%" 
-                                            stopColor="#3B82F6" 
-                                            stopOpacity={0.8}
-                                        />
-                                        <stop 
-                                            offset="100%" 
-                                            stopColor="#3B82F6" 
-                                            stopOpacity={0.2}
-                                        />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid 
-                                    vertical={false}
-                                    strokeDasharray="3 3" 
-                                    stroke="currentColor" 
-                                    className="opacity-20 dark:opacity-10"
-                                />
                                 <XAxis
                                     dataKey="month"
                                     tickLine={false}
@@ -154,15 +128,13 @@ export function ClientStats({ stats, monthlyData }: ClientStatsProps) {
                                     className="text-xs"
                                 />
                                 <ChartTooltip
-                                    cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
+                                    cursor={false}
                                     content={<ChartTooltipContent />}
                                 />
                                 <Bar
                                     dataKey="clients"
-                                    fill="url(#clientGradient)"
-                                    radius={6}
-                                    stroke="#3B82F6"
-                                    strokeWidth={1}
+                                    fill="var(--color-clients)"
+                                    radius={4}
                                 />
                             </BarChart>
                         </ChartContainer>

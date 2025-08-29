@@ -6,7 +6,6 @@ use App\Models\Client;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
-use App\Enums\TaskStatus;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -32,12 +31,11 @@ class DashboardController extends Controller
 
         // Task Statistics by Status
         $tasksByStatus = [
-            'pending' => Task::where('status', TaskStatus::PENDING)->count(),
-            'in_progress' => Task::where('status', TaskStatus::IN_PROGRESS)->count(),
-            'open' => Task::where('status', TaskStatus::OPEN)->count(),
-            'waiting_client' => Task::where('status', TaskStatus::WAITING_CLIENT)->count(),
-            'blocked' => Task::where('status', TaskStatus::BLOCKED)->count(),
-            'closed' => Task::where('status', TaskStatus::CLOSED)->count(),
+            'pending' => Task::where('status', 'pending')->count(),
+            'in_progress' => Task::where('status', 'in_progress')->count(),
+            'completed' => Task::where('status', 'completed')->count(),
+            'on_hold' => Task::where('status', 'on_hold')->count(),
+            'cancelled' => Task::where('status', 'cancelled')->count(),
         ];
 
         // User Statistics
