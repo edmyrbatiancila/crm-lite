@@ -42,3 +42,26 @@ export const taskChartConfig = {
         color: "hsl(var(--chart-5))",
     },
 } satisfies ChartConfig;
+
+export const projectChartConfig = {
+    open: {
+        label: "Open",
+        color: "#8B5CF6", // Purple
+    },
+    in_progress: {
+        label: "In Progress",
+        color: "#F59E0B", // Amber
+    },
+    blocked: {
+        label: "Blocked",
+        color: "#EF4444", // Red
+    },
+    cancelled: {
+        label: "Cancelled",
+        color: "#6B7280", // Gray
+    },
+    completed: {
+        label: "Completed",
+        color: "#10B981", // Green
+    },
+} satisfies ChartConfig;

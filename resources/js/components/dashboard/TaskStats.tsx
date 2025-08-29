@@ -2,53 +2,53 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { BarChart, Bar, XAxis, YAxis } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Cell, CartesianGrid } from 'recharts';
 import { ListTodo, Clock, CheckCircle2, Pause, X } from 'lucide-react';
+import { TaskChartStatus } from '@/types/tasks/ITasks';
 
 interface TaskStatsProps {
-  stats: {
-    pending: number;
-    in_progress: number;
-    completed: number;
-    on_hold: number;
-    cancelled: number;
-  };
+  stats: TaskChartStatus;
 }
 
 const taskChartConfig = {
   pending: {
     label: "Pending",
-    color: "hsl(var(--chart-1))",
+    color: "#3B82F6", // Blue
   },
   in_progress: {
-    label: "In Progress",
-    color: "hsl(var(--chart-2))",
+    label: "In Progress", 
+    color: "#F59E0B", // Amber
   },
-  completed: {
-    label: "Completed",
-    color: "hsl(var(--chart-3))",
+  closed: {
+    label: "Closed",
+    color: "#10B981", // Green
   },
-  on_hold: {
-    label: "On Hold",
-    color: "hsl(var(--chart-4))",
+  blocked: {
+    label: "Blocked",
+    color: "#EF4444", // Red
   },
-  cancelled: {
-    label: "Cancelled",
-    color: "hsl(var(--chart-5))",
+  waiting_client: {
+    label: "Waiting for Client",
+    color: "#8B5CF6", // Purple
+  },
+  open: {
+    label: "Open",
+    color: "#06B6D4", // Cyan
   },
 } satisfies ChartConfig;
 
 export function TaskStats({ stats }: TaskStatsProps) {
   const chartData = [
-    { status: 'Pending', count: stats.pending, fill: 'var(--color-pending)' },
-    { status: 'In Progress', count: stats.in_progress, fill: 'var(--color-in_progress)' },
-    { status: 'Completed', count: stats.completed, fill: 'var(--color-completed)' },
-    { status: 'On Hold', count: stats.on_hold, fill: 'var(--color-on_hold)' },
-    { status: 'Cancelled', count: stats.cancelled, fill: 'var(--color-cancelled)' },
+    { status: 'Pending', count: stats.pending, fill: '#3B82F6' },
+    { status: 'In Progress', count: stats.in_progress, fill: '#F59E0B' },
+    { status: 'Closed', count: stats.closed, fill: '#10B981' },
+    { status: 'Waiting for Client', count: stats.waiting_client, fill: '#8B5CF6' },
+    { status: 'Blocked', count: stats.blocked, fill: '#EF4444' },
+    { status: 'Open', count: stats.open, fill: '#06B6D4' },
   ];
 
   const totalTasks = Object.values(stats).reduce((sum, count) => sum + count, 0);
-  const completionRate = totalTasks > 0 ? (stats.completed / totalTasks) * 100 : 0;
+  const completionRate = totalTasks > 0 ? (stats.closed / totalTasks) * 100 : 0;
 
   const statusCards = [
     { 
@@ -63,34 +63,42 @@ export function TaskStats({ stats }: TaskStatsProps) {
       title: 'In Progress', 
       value: stats.in_progress, 
       icon: Clock, 
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
-      iconColor: 'text-orange-500'
+      color: 'text-amber-600',
+      bgColor: 'bg-amber-50',
+      iconColor: 'text-amber-500'
     },
     { 
-      title: 'Completed', 
-      value: stats.completed, 
+      title: 'Closed', 
+      value: stats.closed, 
       icon: CheckCircle2, 
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      iconColor: 'text-green-500'
+      color: 'text-emerald-600',
+      bgColor: 'bg-emerald-50',
+      iconColor: 'text-emerald-500'
     },
     { 
-      title: 'On Hold', 
-      value: stats.on_hold, 
+      title: 'Waiting for Client', 
+      value: stats.waiting_client, 
       icon: Pause, 
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-50',
-      iconColor: 'text-yellow-500'
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+      iconColor: 'text-purple-500'
     },
     { 
-      title: 'Cancelled', 
-      value: stats.cancelled, 
+      title: 'Blocked', 
+      value: stats.blocked, 
       icon: X, 
       color: 'text-red-600',
       bgColor: 'bg-red-50',
       iconColor: 'text-red-500'
     },
+    {
+      title: 'Open',
+      value: stats.open,
+      icon: ListTodo,
+      color: 'text-cyan-600',
+      bgColor: 'bg-cyan-50',
+      iconColor: 'text-cyan-500'
+    }
   ];
 
   return (
@@ -101,7 +109,7 @@ export function TaskStats({ stats }: TaskStatsProps) {
       className="space-y-4"
     >
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
         {statusCards.map((card, index) => {
           const Icon = card.icon;
           return (
@@ -152,6 +160,33 @@ export function TaskStats({ stats }: TaskStatsProps) {
                   bottom: 5,
                 }}
               >
+                <defs>
+                  <linearGradient id="pendingGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                  </linearGradient>
+                  <linearGradient id="inProgressGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.3}/>
+                  </linearGradient>
+                  <linearGradient id="closedGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0.3}/>
+                  </linearGradient>
+                  <linearGradient id="waitingGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.3}/>
+                  </linearGradient>
+                  <linearGradient id="blockedGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#EF4444" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#EF4444" stopOpacity={0.3}/>
+                  </linearGradient>
+                  <linearGradient id="openGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#06B6D4" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#06B6D4" stopOpacity={0.3}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e0e7ff" opacity={0.5} />
                 <XAxis
                   dataKey="status"
                   tickLine={false}
@@ -172,9 +207,24 @@ export function TaskStats({ stats }: TaskStatsProps) {
                 />
                 <Bar
                   dataKey="count"
-                  fill="var(--color-pending)"
                   radius={4}
-                />
+                  stroke="#fff"
+                  strokeWidth={1}
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={
+                        entry.status === 'Pending' ? 'url(#pendingGradient)' :
+                        entry.status === 'In Progress' ? 'url(#inProgressGradient)' :
+                        entry.status === 'Closed' ? 'url(#closedGradient)' :
+                        entry.status === 'Waiting for Client' ? 'url(#waitingGradient)' :
+                        entry.status === 'Blocked' ? 'url(#blockedGradient)' :
+                        'url(#openGradient)'
+                      }
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ChartContainer>
           </CardContent>

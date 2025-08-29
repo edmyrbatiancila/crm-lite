@@ -22,9 +22,10 @@ export interface TaskForm {
 export interface TaskChartStatus {
     pending: number;
     in_progress: number;
-    completed: number;
-    on_hold: number;
-    cancelled: number;
+    waiting_client: number;
+    blocked: number;
+    closed: number;
+    open: number;
 }
 
 export const taskBreadcrumbs: BreadcrumbItem[] = [

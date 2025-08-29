@@ -9,6 +9,7 @@ import { UserStats } from '@/components/dashboard/UserStats';
 import { OverviewTrends } from '@/components/dashboard/OverviewTrends';
 import { type BreadcrumbItem } from '@/types';
 import { BarChart3, Calendar } from 'lucide-react';
+import { TaskChartStatus } from '@/types/tasks/ITasks';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,17 +27,13 @@ interface DashboardProps {
         };
         projects: {
             total: number;
-            ongoing: number;
-            completed: number;
-            pending: number;
-        };
-        tasks: {
-            pending: number;
+            open: number;
             in_progress: number;
-            completed: number;
-            on_hold: number;
+            blocked: number;
             cancelled: number;
+            completed: number;
         };
+        tasks: TaskChartStatus;
         users: {
             total: number;
             active: number;

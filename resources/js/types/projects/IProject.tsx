@@ -34,6 +34,15 @@ export interface ClientProject {
     name: string;
 }
 
+export interface ProjectChartStatus {
+    total: number;
+    open: number;
+    in_progress: number;
+    blocked: number;
+    cancelled: number;
+    completed: number;
+}
+
 export const projectBreadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Projects',

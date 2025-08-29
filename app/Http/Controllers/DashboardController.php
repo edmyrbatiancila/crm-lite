@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ProjectStatus;
+use App\Enums\TaskStatus;
 use App\Models\Client;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -25,17 +26,21 @@ class DashboardController extends Controller
 
         // Project Statistics
         $totalProjects = Project::count();
-        $ongoingProjects = Project::where('status', 'in_progress')->count();
-        $completedProjects = Project::where('status', 'completed')->count();
-        $pendingProjects = Project::where('status', 'pending')->count();
+        $openProjects = Project::where('status', ProjectStatus::OPEN)->count();
+        $inProgressProjects = Project::where('status', ProjectStatus::IN_PROGRESS)->count();
+        $blockedProjects = Project::where('status', ProjectStatus::BLOCKED)->count();
+        $cancelledProjects = Project::where('status', ProjectStatus::CANCELLED)->count();
+        $completedProjects = Project::where('status', ProjectStatus::COMPLETED)->count();
 
         // Task Statistics by Status
         $tasksByStatus = [
-            'pending' => Task::where('status', 'pending')->count(),
-            'in_progress' => Task::where('status', 'in_progress')->count(),
-            'completed' => Task::where('status', 'completed')->count(),
-            'on_hold' => Task::where('status', 'on_hold')->count(),
-            'cancelled' => Task::where('status', 'cancelled')->count(),
+            'pending' => Task::where('status', TaskStatus::PENDING)->count(),
+            'in_progress' => Task::where('status', TaskStatus::IN_PROGRESS)->count(),
+            'waiting_client' => Task::where('status', TaskStatus::WAITING_CLIENT)->count(),
+            'open' => Task::where('status', TaskStatus::OPEN)->count(),
+            'pending' => Task::where('status', TaskStatus::PENDING)->count(),
+            'blocked' => Task::where('status', TaskStatus::BLOCKED)->count(),
+            'closed' => Task::where('status', TaskStatus::CLOSED)->count()
         ];
 
         // User Statistics
@@ -71,9 +76,11 @@ class DashboardController extends Controller
                 ],
                 'projects' => [
                     'total' => $totalProjects,
-                    'ongoing' => $ongoingProjects,
+                    'open' => $openProjects,
+                    'in_progress' => $inProgressProjects,
+                    'blocked' => $blockedProjects,
+                    'cancelled' => $cancelledProjects,
                     'completed' => $completedProjects,
-                    'pending' => $pendingProjects,
                 ],
                 'tasks' => $tasksByStatus,
                 'users' => [
