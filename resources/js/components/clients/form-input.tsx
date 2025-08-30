@@ -5,7 +5,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import { motion } from "framer-motion";
-import { ClientForm, User } from "@/types/clients/IClients";
+import { ClientForm, User, CurrentUser } from "@/types/clients/IClients";
 import SelectInput from "../shared/select-input";
 // import { FormEventHandler } from "react";
 
@@ -18,6 +18,7 @@ interface IFormInputProps {
     onSelectChange: (name: keyof ClientForm, value: string) => void;
     isEditMode: boolean;
     users: User[];
+    currentUser: CurrentUser;
 }
 
 const FormInput = ({
@@ -28,8 +29,15 @@ const FormInput = ({
     processing, 
     isEditMode,
     onSelectChange,
-    users 
+    users,
+    currentUser
 }: IFormInputProps) => {
+    
+    // Determine if dropdown should be disabled
+    const isDropdownDisabled = processing || 
+        (currentUser.role === 'admin' && users.length === 0) || 
+        (currentUser.role !== 'admin');
+
     return (
         <form onSubmit={ onClientSubmit } className="flex flex-col gap-6">
             <div className="grid lg:grid-cols-2 gap-6">
@@ -102,8 +110,18 @@ const FormInput = ({
                         displayKey="first_name"
                         groupLabel="Existing User"
                         error={errors.assigned_to}
-                        disabled={processing}
+                        disabled={isDropdownDisabled}
                     />
+                    {currentUser.role !== 'admin' && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                            <span className="text-amber-600">Note:</span> As a regular user, you can only assign clients to yourself.
+                        </p>
+                    )}
+                    {currentUser.role === 'admin' && users.length === 0 && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                            <span className="text-amber-600">Note:</span> No other users available for assignment. Create additional users first.
+                        </p>
+                    )}
                 </div>
             </div>
             <div className="grid w-full gap-3">

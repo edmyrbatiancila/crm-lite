@@ -7,6 +7,9 @@ import { ProjectStats } from '@/components/dashboard/ProjectStats';
 import { TaskStats } from '@/components/dashboard/TaskStats';
 import { UserStats } from '@/components/dashboard/UserStats';
 import { OverviewTrends } from '@/components/dashboard/OverviewTrends';
+import { WelcomeModal } from '@/components/modals/WelcomeModal';
+import { AdminUpdatesModal } from '@/components/modals/AdminUpdatesModal';
+import { useModalManager } from '@/hooks/useModalManager';
 import { type BreadcrumbItem } from '@/types';
 import { BarChart3, Calendar } from 'lucide-react';
 import { TaskChartStatus } from '@/types/tasks/ITasks';
@@ -48,9 +51,42 @@ interface DashboardProps {
         tasks: number;
         users: number;
     }>;
+    user: {
+        id: number;
+        first_name: string;
+        last_name: string;
+        email: string;
+        role: string;
+        first_login_at: string | null;
+        last_login_at: string | null;
+        created_at: string;
+    };
+    adminData?: {
+        stats: {
+            newUsersToday: number;
+            newClientsToday: number;
+            newProjectsToday: number;
+            newTasksToday: number;
+            totalUsers: number;
+            totalClients: number;
+            totalProjects: number;
+            totalTasks: number;
+        };
+        recentUpdates: Array<{
+            id: number;
+            type: 'user' | 'client' | 'project' | 'task';
+            title: string;
+            description: string;
+            created_at: string;
+            user_name?: string;
+            status?: string;
+        }>;
+    };
 }
 
-export default function Dashboard({ stats, monthlyData }: DashboardProps) {
+export default function Dashboard({ stats, monthlyData, user, adminData }: DashboardProps) {
+    const { modalState, closeWelcomeModal, closeAdminModal } = useModalManager(user);
+
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -99,6 +135,9 @@ export default function Dashboard({ stats, monthlyData }: DashboardProps) {
                         </div>
                     </div>
                 </motion.div>
+
+                {/* Welcome Card for New Users */}
+                {/* <WelcomeCard user={user} /> */}
 
                 {/* Overview Trends */}
                 <OverviewTrends monthlyData={monthlyData} />
@@ -157,6 +196,23 @@ export default function Dashboard({ stats, monthlyData }: DashboardProps) {
                     </div>
                 </motion.div>
             </motion.div>
+
+            {/* Role-based Modals */}
+            <WelcomeModal 
+                isOpen={modalState.showWelcomeModal}
+                onClose={closeWelcomeModal}
+                user={user}
+            />
+            
+            {adminData && (
+                <AdminUpdatesModal
+                    isOpen={modalState.showAdminModal}
+                    onClose={closeAdminModal}
+                    recentUpdates={adminData.recentUpdates}
+                    stats={adminData.stats}
+                    user={user}
+                />
+            )}
         </AppLayout>
     );
 }

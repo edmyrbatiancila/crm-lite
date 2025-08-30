@@ -3,17 +3,17 @@ import { Check } from "lucide-react";
 
 const LandingPageBenefits = () => {
     return (
-        <section className="py-24 bg-gradient-to-b from-blue-50 to-white">
+        <section className="py-24 bg-gradient-to-b from-blue-50 to-white dark:from-blue-900/20 dark:to-gray-900 transition-colors duration-300">
             <div className="container mx-auto px-6">
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
                     {/* Left side - Benefits list */}
                     <div className="space-y-8">
                         <div>
-                            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 transition-colors duration-300">
                                 Why Choose
-                                <span className="text-blue-600"> CRM-lite?</span>
+                                <span className="text-blue-600 dark:text-blue-400"> CRM-lite?</span>
                             </h2>
-                            <p className="text-xl text-gray-600 leading-relaxed">
+                            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed transition-colors duration-300">
                                 Join thousands of businesses that have transformed their customer 
                                 relationships and boosted revenue with our intuitive platform.
                             </p>

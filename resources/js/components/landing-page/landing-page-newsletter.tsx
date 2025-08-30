@@ -4,11 +4,11 @@ import { Input } from "../ui/input";
 
 const LandingPageNewsLetter = () => {
     return (
-        <section className="py-24 bg-gradient-to-r from-blue-600 to-green-600 relative overflow-hidden">
+        <section className="py-24 bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-700 dark:to-green-700 relative overflow-hidden transition-colors duration-300">
             {/* Background decoration */}
             <div className="absolute inset-0">
-                <div className="absolute top-10 right-10 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-10 left-10 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+                <div className="absolute top-10 right-10 w-64 h-64 bg-white/10 dark:bg-white/5 rounded-full blur-3xl transition-colors duration-300"></div>
+                <div className="absolute bottom-10 left-10 w-96 h-96 bg-white/5 dark:bg-white/3 rounded-full blur-3xl transition-colors duration-300"></div>
             </div>
 
             <div className="container mx-auto px-6 relative z-10">

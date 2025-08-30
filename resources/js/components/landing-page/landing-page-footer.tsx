@@ -3,7 +3,7 @@ import { Facebook, Github, Linkedin, Mail, MapPin, Phone, Twitter } from "lucide
 
 const LandingPageFooter = () => {
     return (
-        <footer className="bg-gray-900 text-white">
+        <footer className="bg-gray-900 dark:bg-gray-950 text-white transition-colors duration-300">
             <div className="container mx-auto px-6 py-16">
                 {/* Main Footer Content */}
                 <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-12 mb-12">
@@ -12,13 +12,13 @@ const LandingPageFooter = () => {
                         <h3 className="text-2xl font-bold mb-4">
                             CRM<span className="text-blue-400">-lite</span>
                         </h3>
-                        <p className="text-gray-400 mb-6 leading-relaxed">
+                        <p className="text-gray-400 dark:text-gray-500 mb-6 leading-relaxed transition-colors duration-300">
                             Simplifying customer relationship management for growing businesses worldwide. 
                             Build stronger connections, drive sales, and scale your success.
                         </p>
 
                         {/* Contact info */}
-                        <div className="space-y-3 text-sm text-gray-400">
+                        <div className="space-y-3 text-sm text-gray-400 dark:text-gray-500 transition-colors duration-300">
                             <div className="flex items-center gap-3">
                                 <Mail className="h-4 w-4" />
                                 <span>support@crm-lite.com</span>

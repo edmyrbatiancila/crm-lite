@@ -24,6 +24,18 @@ class ClientRequest extends FormRequest
     {
 
         $clientId = $this->route('client'); // assuming route model binding e.g. /clients/{client}
+        $currentUser = auth()->user();
+
+        $assignedToRules = ['nullable', Rule::exists('users', 'id')];
+        
+        // If user is admin, assigned_to is required and cannot be themselves
+        if ($currentUser && $currentUser->role === 'admin') {
+            $assignedToRules = [
+                'required', 
+                Rule::exists('users', 'id'),
+                'not_in:' . $currentUser->id, // Admin cannot assign to themselves
+            ];
+        }
 
         return [
             'name'              => 'required|string|max:255',
@@ -37,14 +49,16 @@ class ClientRequest extends FormRequest
             'phone'             => 'nullable|string|max:20',
             'address'           => 'required|string|max:500',
             'notes'             => 'nullable|string|max:500',
-            'assigned_to'       => ['nullable', Rule::exists('users', 'id')]
+            'assigned_to'       => $assignedToRules
         ];
     }
 
     public function messages(): array
     {
         return [
-            'assigned_to.id.exists' => 'The selected user for assignment does not exist.',
+            'assigned_to.exists' => 'The selected user for assignment does not exist.',
+            'assigned_to.required' => 'Please select a user to assign this client to.',
+            'assigned_to.not_in' => 'Admins cannot assign clients to themselves.',
         ];
     }
 }

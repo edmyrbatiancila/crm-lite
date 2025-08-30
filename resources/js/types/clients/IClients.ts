@@ -26,6 +26,13 @@ export interface ClientForm {
 export interface User {
     id: number;
     first_name: string;
+    last_name?: string;
+}
+
+export interface CurrentUser {
+    id: number;
+    role: string;
+    canAssignToOthers: boolean;
 }
 
 export const clientBreadcrumbs: BreadcrumbItem[] = [

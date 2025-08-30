@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
@@ -35,7 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Project Page:
     Route::get('projects', [ProjectController::class, 'index'])->name('projects.index'); // index page for Projects.
-    Route::get('projects/create', [ProjectController::class, 'create'])->name('projects.create'); // Page in creating new projects.
+    Route::get('projects/create', [ProjectController::class, 'create'])->name('projects.create'); // Page in creating new project.
     Route::post('projects/store', [ProjectController::class, 'store'])->name('projects.store'); // Store new Project.
     Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit'); // Editing certain project.
     Route::put('projects/{project}/update', [ProjectController::class, 'update'])->name('projects.update'); // Updating certain project.
@@ -55,6 +56,48 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Activity Logs Page:
     Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index'); // index page for Activity Logs.
+
+    // Notifications:
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('notifications/unread', [NotificationController::class, 'unread'])->name('notifications.unread');
+    Route::patch('notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::patch('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    
+    // Test routes for notification system (can be removed in production)
+    Route::get('test-notifications', function () {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        
+        \App\Services\NotificationService::create(
+            $user,
+            'Test Notification',
+            'This is a test notification to verify the dynamic notification system is working!',
+            \App\Enums\NotificationType::INFO,
+            ['test' => true, 'timestamp' => now()->toISOString()]
+        );
+        
+        return redirect()->route('dashboard')->with('success', 'Test notification created!');
+    })->name('test.notifications');
+    
+    // Test welcome notification route
+    Route::get('test-welcome', function () {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        
+        // Send welcome notification
+        \App\Services\NotificationService::userWelcome($user);
+        
+        return redirect()->route('dashboard')->with('success', 'Welcome notification sent!');
+    })->name('test.welcome');
+    
+    // Reset first login for testing
+    Route::get('reset-first-login', function () {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $user->update([
+            'first_login_at' => null,
+            'last_login_at' => null,
+        ]);
+        
+        return redirect()->route('dashboard')->with('success', 'First login reset! Next page load will trigger first login welcome.');
+    })->name('reset.first.login');
 });
 
 require __DIR__.'/settings.php';

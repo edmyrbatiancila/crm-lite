@@ -29,18 +29,23 @@ export const taskChartConfig = {
         label: "In Progress",
         color: "hsl(var(--chart-2))",
     },
-    completed: {
-        label: "Completed",
+    closed: {
+        label: "Closed",
         color: "hsl(var(--chart-3))",
     },
-    on_hold: {
-        label: "On Hold",
+    blocked: {
+        label: "Blocked",
         color: "hsl(var(--chart-4))",
     },
-    cancelled: {
-        label: "Cancelled",
+    waiting_client: {
+        label: "Waiting for Client",
         color: "hsl(var(--chart-5))",
     },
+    open: {
+        label: "Open",
+        color: "hsl(var(--chart-6))",
+    },
+
 } satisfies ChartConfig;
 
 export const projectChartConfig = {

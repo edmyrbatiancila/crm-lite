@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ClientRequest;
 use App\Models\Client;
 use App\Models\User;
+use App\Services\NotificationService;
 use App\Traits\HasSearchAndFilter;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ClientController extends Controller
@@ -79,10 +81,28 @@ class ClientController extends Controller
     {
         $this->authorize('create', Client::class);
         
-        $users = User::select('id', 'first_name')->get();
+        $currentUser = Auth::user();
+        
+        // If user is admin, they can assign to any user except themselves
+        // If user is regular user, they can only assign to themselves
+        if ($currentUser->role === 'admin') {
+            $users = User::select('id', 'first_name', 'last_name')
+                ->where('id', '!=', $currentUser->id) // Exclude admin from assignment options
+                ->get();
+        } else {
+            // Regular users can only assign clients to themselves
+            $users = User::select('id', 'first_name', 'last_name')
+                ->where('id', $currentUser->id)
+                ->get();
+        }
 
         return Inertia::render('admin/client/client-form-page', [
             'users' => $users,
+            'currentUser' => [
+                'id' => $currentUser->id,
+                'role' => $currentUser->role ?? 'user',
+                'canAssignToOthers' => $currentUser->role === 'admin'
+            ]
         ]);
     }
 
@@ -93,7 +113,28 @@ class ClientController extends Controller
     {
         $this->authorize('create', Client::class);
 
-        Client::create($request->validated());
+        $currentUser = Auth::user();
+        $validatedData = $request->validated();
+
+        // If user is not admin and trying to assign to someone else, override assignment
+        if ($currentUser->role !== 'admin' && $validatedData['assigned_to'] != $currentUser->id) {
+            $validatedData['assigned_to'] = $currentUser->id;
+        }
+
+        // If user is admin and trying to assign to themselves, this should not be allowed
+        if ($currentUser->role === 'admin' && $validatedData['assigned_to'] == $currentUser->id) {
+            return redirect()->back()->withErrors(['assigned_to' => 'Admins cannot assign clients to themselves.']);
+        }
+
+        $client = Client::create($validatedData);
+
+        // Send notification to assigned user if admin created the client for someone else
+        if ($currentUser->role === 'admin' && $validatedData['assigned_to'] && $validatedData['assigned_to'] != $currentUser->id) {
+            $assignedUser = User::find($validatedData['assigned_to']);
+            if ($assignedUser) {
+                NotificationService::clientAssignmentChanged($client, null, $assignedUser, $currentUser);
+            }
+        }
 
         return redirect()->route('clients.index')->with('success', 'Client successfully created');
     }
@@ -113,11 +154,29 @@ class ClientController extends Controller
     {
         $this->authorize('update', $client);
         
-        $users = User::select('id', 'first_name')->get();
+        $currentUser = Auth::user();
+        
+        // If user is admin, they can assign to any user except themselves
+        // If user is regular user, they can only assign to themselves
+        if ($currentUser->role === 'admin') {
+            $users = User::select('id', 'first_name', 'last_name')
+                ->where('id', '!=', $currentUser->id) // Exclude admin from assignment options
+                ->get();
+        } else {
+            // Regular users can only assign clients to themselves
+            $users = User::select('id', 'first_name', 'last_name')
+                ->where('id', $currentUser->id)
+                ->get();
+        }
 
         return Inertia::render('admin/client/client-form-page', [
             'users' => $users,
             'client' => $client,
+            'currentUser' => [
+                'id' => $currentUser->id,
+                'role' => $currentUser->role ?? 'user',
+                'canAssignToOthers' => $currentUser->role === 'admin'
+            ]
         ]);
     }
 
@@ -128,7 +187,70 @@ class ClientController extends Controller
     {
         $this->authorize('update', $client);
 
-        $client->update($request->validated());
+        $currentUser = Auth::user();
+        $validatedData = $request->validated();
+
+        // If user is not admin and trying to assign to someone else, override assignment
+        if ($currentUser->role !== 'admin' && $validatedData['assigned_to'] != $currentUser->id) {
+            $validatedData['assigned_to'] = $currentUser->id;
+        }
+
+        // If user is admin and trying to assign to themselves, this should not be allowed
+        if ($currentUser->role === 'admin' && $validatedData['assigned_to'] == $currentUser->id) {
+            return redirect()->back()->withErrors(['assigned_to' => 'Admins cannot assign clients to themselves.']);
+        }
+
+        // Track changes for notifications
+        $originalClient = $client->getOriginal();
+        $changes = [];
+        $assignmentChanged = false;
+        $oldAssignee = null;
+        $newAssignee = null;
+
+        // Check for field changes
+        $trackableFields = ['name', 'email', 'phone', 'mobile_no', 'address', 'notes'];
+        foreach ($trackableFields as $field) {
+            if (isset($validatedData[$field]) && $originalClient[$field] !== $validatedData[$field]) {
+                $changes[$field] = [
+                    'old' => $originalClient[$field],
+                    'new' => $validatedData[$field]
+                ];
+            }
+        }
+
+        // Check for assignment changes
+        if (isset($validatedData['assigned_to']) && $originalClient['assigned_to'] != $validatedData['assigned_to']) {
+            $assignmentChanged = true;
+            $oldAssignee = $originalClient['assigned_to'] ? User::find($originalClient['assigned_to']) : null;
+            $newAssignee = $validatedData['assigned_to'] ? User::find($validatedData['assigned_to']) : null;
+            
+            $changes['assigned_to'] = [
+                'old' => $originalClient['assigned_to'],
+                'new' => $validatedData['assigned_to']
+            ];
+        }
+
+        // Update the client
+        $client->update($validatedData);
+
+        // Send notifications for general updates (excluding assignment changes)
+        if (!empty($changes) && !$assignmentChanged) {
+            NotificationService::clientUpdated($client, $currentUser, $changes);
+        } elseif (!empty($changes) && $assignmentChanged) {
+            // Send notifications for both updates and assignment change
+            $nonAssignmentChanges = array_filter($changes, function($key) {
+                return $key !== 'assigned_to';
+            }, ARRAY_FILTER_USE_KEY);
+            
+            if (!empty($nonAssignmentChanges)) {
+                NotificationService::clientUpdated($client, $currentUser, $nonAssignmentChanges);
+            }
+        }
+
+        // Send assignment change notifications
+        if ($assignmentChanged) {
+            NotificationService::clientAssignmentChanged($client, $oldAssignee, $newAssignee, $currentUser);
+        }
 
         return redirect()->route('clients.index')->with('success', 'Client successfully updated');
     }

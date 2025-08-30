@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -23,6 +24,12 @@ class DashboardController extends Controller
         // Client Statistics
         $totalClients = Client::count();
         $newClientsThisMonth = Client::whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
+        
+        // Previous month client statistics
+        $previousMonth = Carbon::now()->subMonth();
+        $previousMonthStart = $previousMonth->copy()->startOfMonth();
+        $previousMonthEnd = $previousMonth->copy()->endOfMonth();
+        $newClientsPreviousMonth = Client::whereBetween('created_at', [$previousMonthStart, $previousMonthEnd])->count();
 
         // Project Statistics
         $totalProjects = Project::count();
@@ -64,15 +71,36 @@ class DashboardController extends Controller
             ];
         }
 
+        $user = Auth::user();
+        
+        // Admin-specific data
+        $adminData = null;
+        $userRole = $user->role ?? 'user'; // Default to 'user' if role field doesn't exist
+        if ($userRole === 'admin' || $userRole === 'administrator') {
+            $today = Carbon::today();
+            
+            // Today's statistics
+            $adminData = [
+                'stats' => [
+                    'newUsersToday' => User::whereDate('created_at', $today)->count(),
+                    'newClientsToday' => Client::whereDate('created_at', $today)->count(),
+                    'newProjectsToday' => Project::whereDate('created_at', $today)->count(),
+                    'newTasksToday' => Task::whereDate('created_at', $today)->count(),
+                    'totalUsers' => $totalUsers,
+                    'totalClients' => $totalClients,
+                    'totalProjects' => $totalProjects,
+                    'totalTasks' => Task::count(),
+                ],
+                'recentUpdates' => $this->getRecentUpdates()
+            ];
+        }
+        
         return Inertia::render('dashboard', [
             'stats' => [
                 'clients' => [
                     'total' => $totalClients,
                     'newThisMonth' => $newClientsThisMonth,
-                    'previousMonth' => Client::whereBetween('created_at', [
-                        $startOfMonth->copy()->subMonth(),
-                        $startOfMonth->copy()->subMonth()->endOfMonth()
-                    ])->count(),
+                    'previousMonth' => $newClientsPreviousMonth,
                 ],
                 'projects' => [
                     'total' => $totalProjects,
@@ -90,6 +118,99 @@ class DashboardController extends Controller
                 ],
             ],
             'monthlyData' => $monthlyData,
+            'user' => [
+                'id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'role' => $user->role ?? 'user',
+                'first_login_at' => $user->first_login_at?->toISOString(),
+                'last_login_at' => $user->last_login_at?->toISOString(),
+                'created_at' => $user->created_at->toISOString(),
+            ],
+            'adminData' => $adminData,
         ]);
+    }
+
+    private function getRecentUpdates()
+    {
+        $recentUpdates = collect();
+        $today = Carbon::today();
+        $lastWeek = Carbon::now()->subWeek();
+
+        // Recent users
+        $recentUsers = User::where('created_at', '>=', $lastWeek)
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'type' => 'user',
+                    'title' => 'New User Registered',
+                    'description' => "{$user->first_name} {$user->last_name} joined the system",
+                    'created_at' => $user->created_at->toISOString(),
+                    'user_name' => "{$user->first_name} {$user->last_name}",
+                ];
+            });
+
+        // Recent clients
+        $recentClients = Client::where('created_at', '>=', $lastWeek)
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($client) {
+                return [
+                    'id' => $client->id,
+                    'type' => 'client',
+                    'title' => 'New Client Added',
+                    'description' => "Client '{$client->name}' was added to the system",
+                    'created_at' => $client->created_at->toISOString(),
+                ];
+            });
+
+        // Recent projects
+        $recentProjects = Project::where('created_at', '>=', $lastWeek)
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($project) {
+                return [
+                    'id' => $project->id,
+                    'type' => 'project',
+                    'title' => 'New Project Created',
+                    'description' => "Project '{$project->name}' was created",
+                    'created_at' => $project->created_at->toISOString(),
+                    'status' => $project->status->value,
+                ];
+            });
+
+        // Recent tasks
+        $recentTasks = Task::where('created_at', '>=', $lastWeek)
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($task) {
+                return [
+                    'id' => $task->id,
+                    'type' => 'task',
+                    'title' => 'New Task Created',
+                    'description' => "Task '{$task->title}' was created",
+                    'created_at' => $task->created_at->toISOString(),
+                    'status' => $task->status->value,
+                ];
+            });
+
+        // Merge and sort all updates
+        $allUpdates = $recentUpdates
+            ->concat($recentUsers)
+            ->concat($recentClients)
+            ->concat($recentProjects)
+            ->concat($recentTasks)
+            ->sortByDesc('created_at')
+            ->take(10)
+            ->values();
+
+        return $allUpdates;
     }
 }

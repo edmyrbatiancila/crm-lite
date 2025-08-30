@@ -1,6 +1,6 @@
 import { NavItem } from '@/types';
 import { type ClassValue, clsx } from 'clsx';
-import { BookOpen, ClipboardList, Folder, LayoutGrid, Rocket, UserCircleIcon, UserPlus, UserSquareIcon, Activity } from 'lucide-react';
+import { BookOpen, ClipboardList, Folder, LayoutGrid, Rocket, UserCircleIcon, UserPlus, UserSquareIcon, Activity, Bell } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -37,6 +37,11 @@ export const mainNavItems: NavItem[] = [
         title: 'Leads',
         href: '/leads',
         icon: UserCircleIcon,
+    },
+    {
+        title: 'Notifications',
+        href: '/notifications',
+        icon: Bell,
     },
     {
         title: 'Activity Logs',

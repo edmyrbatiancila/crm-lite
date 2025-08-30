@@ -3,16 +3,17 @@ import FormPageContent from "@/components/shared/form-page-content";
 import AppLayout from "@/layouts/app-layout";
 import { showSuccess } from "@/lib/alert";
 import { BreadcrumbItem } from "@/types";
-import { ClientForm, User } from "@/types/clients/IClients";
+import { ClientForm, User, CurrentUser } from "@/types/clients/IClients";
 import { useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 
 interface IClientFormPageProps {
     users: User[];
     client?: ClientForm;
+    currentUser: CurrentUser;
 }
 
-const ClientFormPage = ({ users, client }: IClientFormPageProps) => {
+const ClientFormPage = ({ users, client, currentUser }: IClientFormPageProps) => {
     
     const isEditMode = !!client;
 
@@ -31,7 +32,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         phone: client?.phone ?? '',
         address: client?.address ?? '',
         notes: client?.notes ?? '',
-        assigned_to: client?.assigned_to ?? null
+        assigned_to: client?.assigned_to ?? (!currentUser.canAssignToOthers ? currentUser.id : null)
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -85,6 +86,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                     onSelectChange={ handleSelectChange }
                     isEditMode={ isEditMode }
                     users={ users }
+                    currentUser={ currentUser }
                 />
             </FormPageContent>
         </AppLayout>
