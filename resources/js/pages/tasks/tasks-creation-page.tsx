@@ -2,6 +2,7 @@ import FormPageContent from "@/components/shared/form-page-content";
 import TaskFormInput from "@/components/tasks/task-form-input";
 import AppLayout from "@/layouts/app-layout";
 import { BreadcrumbItem } from "@/types";
+import { CurrentUser } from "@/types/shared/assign-to";
 import { TaskForm } from "@/types/tasks/ITasks";
 import { useForm } from "@inertiajs/react";
 
@@ -12,6 +13,7 @@ interface ITaskCreationPageProps {
     projects: { id: number; title: string }[];
     taskStatuses: { value: string; label: string }[];
     mode: string;
+    currentUser: CurrentUser;
 }
 
 const TaskCreationPage = ({
@@ -20,7 +22,8 @@ const TaskCreationPage = ({
     clients,
     projects,
     taskStatuses,
-    mode
+    mode,
+    currentUser
 }: ITaskCreationPageProps) => {
 
     const breadCrumbs: BreadcrumbItem[] = [
@@ -35,7 +38,7 @@ const TaskCreationPage = ({
         title: task?.title ?? '',
         description: task?.description ?? '',
         client_id: task?.client_id ?? null,
-        user_id: task?.user_id ?? null,
+        user_id: task?.user_id ?? (currentUser.role !== 'admin' ? currentUser.id : null),
         project_id: task?.project_id ?? null,
         deadline_at: task?.deadline_at ?? '',
         status: task?.status ?? ''
@@ -88,6 +91,7 @@ const TaskCreationPage = ({
                     taskStatuses={ taskStatuses }
                     onSubmit={ handleSubmit }
                     mode={ mode }
+                    currentUser={ currentUser }
                 />
             </FormPageContent>
         </AppLayout>

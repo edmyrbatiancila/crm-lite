@@ -21,13 +21,6 @@ interface IClientPageProps {
     clients: Pagination<Clients>;
 }
 
-// const breadcrumbs: BreadcrumbItem[] = [
-//     {
-//         title: 'Clients',
-//         href: '/clients',
-//     }
-// ];
-
 const ClientPage = ({ clients }: IClientPageProps) => {
     const { hasPermission, canManageClients } = useAuth();
 

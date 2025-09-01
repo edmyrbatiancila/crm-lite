@@ -5,8 +5,9 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import { motion } from "framer-motion";
-import { ClientForm, User, CurrentUser } from "@/types/clients/IClients";
+import { ClientForm, User } from "@/types/clients/IClients";
 import SelectInput from "../shared/select-input";
+import { CurrentUser } from "@/types/shared/assign-to";
 // import { FormEventHandler } from "react";
 
 interface IFormInputProps {

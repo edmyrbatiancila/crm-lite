@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ModeStatus;
+use App\Enums\RoleEnum;
 use App\Http\Requests\ClientRequest;
 use App\Models\Client;
 use App\Models\User;
@@ -79,7 +81,7 @@ class ClientController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Client::class);
+        $this->authorize(ModeStatus::CREATE->value, Client::class);
         
         $currentUser = Auth::user();
         
@@ -100,8 +102,8 @@ class ClientController extends Controller
             'users' => $users,
             'currentUser' => [
                 'id' => $currentUser->id,
-                'role' => $currentUser->role ?? 'user',
-                'canAssignToOthers' => $currentUser->role === 'admin'
+                'role' => $currentUser->role ?? RoleEnum::USER->value,
+                'canAssignToOthers' => $currentUser->role === RoleEnum::ADMIN->value
             ]
         ]);
     }

@@ -14,7 +14,16 @@ export interface UserForm {
     last_name: string;
     email: string;
     password: string;
-}
+};
+
+export interface User {
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    first_login_at: string | null;
+    last_login_at: string | null;
+};
 
 export const userBreadcrumbs: BreadcrumbItem[] = [
     {

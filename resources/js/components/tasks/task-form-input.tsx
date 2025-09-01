@@ -6,6 +6,8 @@ import { Textarea } from "../ui/textarea";
 import CalendarPopoverInput from "../shared/calendar-popover-input";
 import SelectInput from "../shared/select-input";
 import SaveButtons from "../shared/save-buttons";
+import { CurrentUser } from "@/types/shared/assign-to";
+import { User } from "@/types/clients/IClients";
 
 interface ITaskFormInputProps {
     onData: TaskForm;
@@ -18,6 +20,7 @@ interface ITaskFormInputProps {
     taskStatuses: { value: string; label: string }[];
     onSubmit: (e: React.FormEvent) => void;
     mode: string;
+    currentUser: CurrentUser;
 }
 
 const TaskFormInput = ({ 
@@ -30,8 +33,19 @@ const TaskFormInput = ({
     projects,
     taskStatuses,
     onSubmit,
-    mode
+    mode,
+    currentUser
 }: ITaskFormInputProps) => {
+
+    // Determine if dropdown should be disabled
+    const isDropdownDisabled = onProcessing || 
+        (currentUser.role === 'admin' && users.length === 0) || 
+        (currentUser.role !== 'admin');
+
+    // Filter users based on role
+    const availableUsers = currentUser.role === 'admin' ? users : users.filter(user => user.id === currentUser.id);
+
+
     return (
         <form onSubmit={onSubmit} className="flex flex-col gap-6">
             <div className="grid gap-2">
@@ -95,20 +109,33 @@ const TaskFormInput = ({
             </div>
 
             <div className="grid lg:grid-cols-2 gap-6">
-                <SelectInput 
+                <div>
+                    <SelectInput<User> 
                     label="Assigned User"    
                     htmlFor="user_id"
                     value={onData.user_id?.toString() || ''}
                     onChange={(value) => onChange('user_id', value)}
-                    placeholder="Select assigned user"
-                    data={users}
+                    placeholder={currentUser.role === 'admin' ? "Select assigned user" : "Assigned to yourself"}
+                    data={availableUsers}
                     valueKey="id"
                     displayKey="first_name"
-                    groupLabel="Available Users"
+                    groupLabel={currentUser.role === 'admin' ? "Available Users" : "Current User"}
                     error={onErrors.user_id}
+                    disabled={isDropdownDisabled}
                     required
-                    disabled={onProcessing}
                 />
+                {currentUser.role !== 'admin' && (
+                    <div className="text-sm text-muted-foreground mt-1">
+                        <span className="text-amber-600">Note:</span> As a regular user, you can only assign tasks to yourself.
+                    </div>
+                )}
+                {currentUser.role === 'admin' && users.length === 0 && (
+                    <div className="text-sm text-muted-foreground mt-1">
+                        <span className="text-amber-600">Note:</span> No other users available for assignment. Create additional users first.
+                    </div>
+                )}
+                </div>
+                
 
                 <SelectInput 
                     label="Client"    

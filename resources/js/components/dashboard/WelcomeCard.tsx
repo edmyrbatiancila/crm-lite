@@ -12,15 +12,7 @@ import {
     Sparkles
 } from 'lucide-react';
 import { Link } from '@inertiajs/react';
-
-interface User {
-    id: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-    first_login_at: string | null;
-    last_login_at: string | null;
-}
+import { User } from '@/types/users/IUsers';
 
 interface WelcomeCardProps {
     user: User;

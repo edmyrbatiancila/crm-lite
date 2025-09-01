@@ -23,22 +23,18 @@ export function useModalManager(user: User) {
 
     useEffect(() => {
         const shouldShowModal = () => {
-            // Don't show modals if already dismissed in this session
-            const sessionKey = `modal_dismissed_${user.id}_${new Date().toDateString()}`;
-            if (sessionStorage.getItem(sessionKey)) {
-                return;
-            }
-
+            // Check if welcome modal was already dismissed permanently for this user
+            const welcomeModalKey = `welcome_modal_dismissed_${user.id}`;
+            const adminModalKey = `admin_modal_dismissed_${user.id}`;
+            
             const isAdmin = user.role === 'admin' || user.role === 'administrator';
-            const isNewUser = user.first_login_at === null;
-            const isRecentUser = user.created_at && 
-                new Date(user.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // Last 7 days
+            const isFirstTimeUser = user.first_login_at === null;
 
-            if (!isAdmin && (isNewUser || isRecentUser)) {
-                // Show welcome modal for new non-admin users
+            // Only show welcome modal for first-time users (never logged in before)
+            if (!isAdmin && isFirstTimeUser && !localStorage.getItem(welcomeModalKey)) {
                 setModalState(prev => ({ ...prev, showWelcomeModal: true }));
-            } else if (isAdmin) {
-                // Show admin updates modal for administrators
+            } else if (isAdmin && isFirstTimeUser && !localStorage.getItem(adminModalKey)) {
+                // Show admin updates modal for first-time admin users
                 setModalState(prev => ({ ...prev, showAdminModal: true }));
             }
         };
@@ -50,22 +46,25 @@ export function useModalManager(user: User) {
 
     const closeWelcomeModal = () => {
         setModalState(prev => ({ ...prev, showWelcomeModal: false }));
-        // Mark as dismissed for this session
-        const sessionKey = `modal_dismissed_${user.id}_${new Date().toDateString()}`;
-        sessionStorage.setItem(sessionKey, 'true');
+        // Mark welcome modal as permanently dismissed for this user
+        const welcomeModalKey = `welcome_modal_dismissed_${user.id}`;
+        localStorage.setItem(welcomeModalKey, 'true');
     };
 
     const closeAdminModal = () => {
         setModalState(prev => ({ ...prev, showAdminModal: false }));
-        // Mark as dismissed for this session
-        const sessionKey = `modal_dismissed_${user.id}_${new Date().toDateString()}`;
-        sessionStorage.setItem(sessionKey, 'true');
+        // Mark admin modal as permanently dismissed for this user
+        const adminModalKey = `admin_modal_dismissed_${user.id}`;
+        localStorage.setItem(adminModalKey, 'true');
     };
 
     const dismissAllModals = () => {
         setModalState({ showWelcomeModal: false, showAdminModal: false });
-        const sessionKey = `modal_dismissed_${user.id}_${new Date().toDateString()}`;
-        sessionStorage.setItem(sessionKey, 'true');
+        // Mark both modals as permanently dismissed for this user
+        const welcomeModalKey = `welcome_modal_dismissed_${user.id}`;
+        const adminModalKey = `admin_modal_dismissed_${user.id}`;
+        localStorage.setItem(welcomeModalKey, 'true');
+        localStorage.setItem(adminModalKey, 'true');
     };
 
     return {

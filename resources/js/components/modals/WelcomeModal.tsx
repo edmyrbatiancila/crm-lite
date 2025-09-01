@@ -172,7 +172,7 @@ export function WelcomeModal({ user, isOpen, onClose }: WelcomeModalProps) {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-4xl">
                 <DialogHeader>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">

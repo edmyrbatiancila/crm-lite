@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ModeStatus;
+use App\Enums\RoleEnum;
 use App\Enums\TaskStatus;
 use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
@@ -11,18 +12,22 @@ use App\Models\Client;
 use App\Models\Project;
 use App\Models\User;
 use App\Traits\HasSearchAndFilter;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class TaskController extends Controller
 {
-    use HasSearchAndFilter;
+    use AuthorizesRequests, HasSearchAndFilter;
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Task::class);
+        
         $query = Task::with(['user', 'client', 'project']);
 
         // Define searchable fields
@@ -87,10 +92,26 @@ class TaskController extends Controller
      */
     public function create()
     {
-        $users = User::select(['id', 'first_name', 'last_name'])->get();
+        $this->authorize('create', Task::class);
+
+        $currentUser = Auth::user();
+
+        // If user is Admin, they can assign to any user except themselves
+        // If user is regular user, they can only assign to themselves.
+        if ($currentUser->role === 'admin') {
+            $users = User::select('id', 'first_name', 'last_name')
+                ->where('id', '!=', $currentUser->id)
+                ->get();
+        } else {
+            // Regular users can only assign clients to themselves
+            $users = User::select('id', 'first_name', 'last_name')
+                ->where('id', $currentUser->id)
+                ->get();
+        }
+
         $clients = Client::select(['id', 'name'])->get();
         $projects = Project::select(['id', 'title'])->get();
-        $mode = ModeStatus::CREATE;
+        $mode = ModeStatus::CREATE->value;
 
         $taskStatuses = collect(TaskStatus::cases())->map(function ($status) {
             return [
@@ -101,6 +122,11 @@ class TaskController extends Controller
 
         return Inertia::render('tasks/tasks-creation-page', [
             'users' => $users,
+            'currentUser' => [
+                'id' => $currentUser->id,
+                'role' => $currentUser->role ?? RoleEnum::USER->value,
+                'canAssignToOthers' => $currentUser->role === RoleEnum::ADMIN->value
+            ],
             'clients' => $clients,
             'projects' => $projects,
             'taskStatuses' => $taskStatuses,
@@ -114,6 +140,8 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
+        $this->authorize('create', Task::class);
+        
         Task::create($request->validated());
 
         return redirect()->route('tasks.index')->with('success', 'Task successfully created');
@@ -132,10 +160,26 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        $users = User::select(['id', 'first_name', 'last_name'])->get();
+        $this->authorize('update', $task);
+        
+        $currentUser = Auth::user();
+
+        // If user is Admin, they can assign to any user except themselves
+        // If user is regular user, they can only assign to themselves.
+        if ($currentUser->role === 'admin') {
+            $users = User::select('id', 'first_name', 'last_name')
+                ->where('id', '!=', $currentUser->id)
+                ->get();
+        } else {
+            // Regular users can only assign clients to themselves
+            $users = User::select('id', 'first_name', 'last_name')
+                ->where('id', $currentUser->id)
+                ->get();
+        }
+
         $clients = Client::select(['id', 'name'])->get();
         $projects = Project::select(['id', 'title'])->get();
-        $mode = ModeStatus::EDIT;
+        $mode = ModeStatus::EDIT->value;
 
         $taskStatuses = collect(TaskStatus::cases())->map(function ($status) {
             return [
@@ -147,6 +191,11 @@ class TaskController extends Controller
         return Inertia::render('tasks/tasks-creation-page', [
             'task' => $task,
             'users' => $users,
+            'currentUser' => [
+                'id' => $currentUser->id,
+                'role' => $currentUser->role ?? RoleEnum::USER->value,
+                'canAssignToOthers' => $currentUser->role === RoleEnum::ADMIN->value
+            ],
             'clients' => $clients,
             'projects' => $projects,
             'taskStatuses' => $taskStatuses,
@@ -159,6 +208,8 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
+        $this->authorize('update', $task);
+        
         $task->update($request->validated());
 
         return redirect()->route('tasks.index')->with('success', 'Task successfully updated');
@@ -169,6 +220,8 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
+        $this->authorize('delete', $task);
+        
         $task->delete();
 
         return redirect()->route('tasks.index')->with('success', 'Task successfully deleted');

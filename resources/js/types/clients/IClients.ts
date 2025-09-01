@@ -29,11 +29,11 @@ export interface User {
     last_name?: string;
 }
 
-export interface CurrentUser {
-    id: number;
-    role: string;
-    canAssignToOthers: boolean;
-}
+// export interface CurrentUser {
+//     id: number;
+//     role: string;
+//     canAssignToOthers: boolean;
+// }
 
 export const clientBreadcrumbs: BreadcrumbItem[] = [
     { 

@@ -3,7 +3,8 @@ import FormPageContent from "@/components/shared/form-page-content";
 import AppLayout from "@/layouts/app-layout";
 import { showSuccess } from "@/lib/alert";
 import { BreadcrumbItem } from "@/types";
-import { ClientForm, User, CurrentUser } from "@/types/clients/IClients";
+import { ClientForm, User } from "@/types/clients/IClients";
+import { CurrentUser } from "@/types/shared/assign-to";
 import { useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 
