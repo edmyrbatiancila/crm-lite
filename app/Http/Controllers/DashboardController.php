@@ -73,13 +73,9 @@ class DashboardController extends Controller
 
         $user = Auth::user();
         
-        // Admin-specific data
-        $adminData = null;
-        $userRole = $user->role ?? 'user'; // Default to 'user' if role field doesn't exist
+        $userRole = $user->role ?? 'user';
         if ($userRole === 'admin' || $userRole === 'administrator') {
             $today = Carbon::today();
-            
-            // Today's statistics
             $adminData = [
                 'stats' => [
                     'newUsersToday' => User::whereDate('created_at', $today)->count(),
@@ -93,43 +89,98 @@ class DashboardController extends Controller
                 ],
                 'recentUpdates' => $this->getRecentUpdates()
             ];
+            return Inertia::render('dashboard', [
+                'stats' => [
+                    'clients' => [
+                        'total' => $totalClients,
+                        'newThisMonth' => $newClientsThisMonth,
+                        'previousMonth' => $newClientsPreviousMonth,
+                    ],
+                    'projects' => [
+                        'total' => $totalProjects,
+                        'open' => $openProjects,
+                        'in_progress' => $inProgressProjects,
+                        'blocked' => $blockedProjects,
+                        'cancelled' => $cancelledProjects,
+                        'completed' => $completedProjects,
+                    ],
+                    'tasks' => $tasksByStatus,
+                    'users' => [
+                        'total' => $totalUsers,
+                        'active' => $activeUsers,
+                        'inactive' => $totalUsers - $activeUsers,
+                    ],
+                ],
+                'monthlyData' => $monthlyData,
+                'user' => [
+                    'id' => $user->id,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'email' => $user->email,
+                    'role' => $user->role ?? 'user',
+                    'first_login_at' => $user->first_login_at?->toISOString(),
+                    'last_login_at' => $user->last_login_at?->toISOString(),
+                    'created_at' => $user->created_at->toISOString(),
+                ],
+                'adminData' => $adminData,
+            ]);
+        } else {
+            // User-specific dashboard data
+            $userId = $user->id;
+            $clientsCount = Client::where('assigned_to', $userId)->count();
+            $userTasks = Task::where('user_id', $userId);
+            $userProjects = Project::whereHas('tasks', function($q) use ($userId) {
+                $q->where('user_id', $userId);
+            });
+
+            // Task status breakdown for this user
+            $taskStatuses = [
+                'pending', 'in_progress', 'closed', 'waiting_client', 'blocked', 'open'
+            ];
+            $userTasksByStatus = [];
+            foreach ($taskStatuses as $status) {
+                $userTasksByStatus[$status] = (clone $userTasks)->where('status', $status)->count();
+            }
+
+            // Project status breakdown for this user
+            $projectStatuses = [
+                'open', 'in_progress', 'blocked', 'cancelled', 'completed'
+            ];
+            $userProjectsByStatus = [];
+            foreach ($projectStatuses as $status) {
+                $userProjectsByStatus[$status] = (clone $userProjects)->where('status', $status)->count();
+            }
+
+            return Inertia::render('user-dashboard', [
+                'stats' => [
+                    'clients' => $clientsCount,
+                    'tasks' => $userTasksByStatus,
+                    'projects' => $userProjectsByStatus,
+                ],
+                'user' => [
+                    'id' => $user->id,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'email' => $user->email,
+                    'role' => $user->role ?? 'user',
+                ],
+                'taskStatusLabels' => [
+                    ['value' => 'pending', 'label' => 'Pending'],
+                    ['value' => 'in_progress', 'label' => 'In Progress'],
+                    ['value' => 'closed', 'label' => 'Closed'],
+                    ['value' => 'waiting_client', 'label' => 'Waiting for Client'],
+                    ['value' => 'blocked', 'label' => 'Blocked'],
+                    ['value' => 'open', 'label' => 'Open'],
+                ],
+                'projectStatusLabels' => [
+                    ['value' => 'open', 'label' => 'Open'],
+                    ['value' => 'in_progress', 'label' => 'In Progress'],
+                    ['value' => 'blocked', 'label' => 'Blocked'],
+                    ['value' => 'cancelled', 'label' => 'Cancelled'],
+                    ['value' => 'completed', 'label' => 'Completed'],
+                ],
+            ]);
         }
-        
-        return Inertia::render('dashboard', [
-            'stats' => [
-                'clients' => [
-                    'total' => $totalClients,
-                    'newThisMonth' => $newClientsThisMonth,
-                    'previousMonth' => $newClientsPreviousMonth,
-                ],
-                'projects' => [
-                    'total' => $totalProjects,
-                    'open' => $openProjects,
-                    'in_progress' => $inProgressProjects,
-                    'blocked' => $blockedProjects,
-                    'cancelled' => $cancelledProjects,
-                    'completed' => $completedProjects,
-                ],
-                'tasks' => $tasksByStatus,
-                'users' => [
-                    'total' => $totalUsers,
-                    'active' => $activeUsers,
-                    'inactive' => $totalUsers - $activeUsers,
-                ],
-            ],
-            'monthlyData' => $monthlyData,
-            'user' => [
-                'id' => $user->id,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'email' => $user->email,
-                'role' => $user->role ?? 'user',
-                'first_login_at' => $user->first_login_at?->toISOString(),
-                'last_login_at' => $user->last_login_at?->toISOString(),
-                'created_at' => $user->created_at->toISOString(),
-            ],
-            'adminData' => $adminData,
-        ]);
     }
 
     private function getRecentUpdates()

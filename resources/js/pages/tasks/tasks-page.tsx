@@ -20,6 +20,8 @@ interface ITasksPageProps {
 }
 
 const TasksPage = ({ tasks }: ITasksPageProps) => {
+    console.log(tasks);
+
     useFlashMessages();
     const { hasPermission, canManageTasks } = useAuth();
 

@@ -1,11 +1,14 @@
 import { BreadcrumbItem } from "..";
 
+
+
 export interface Tasks {
     id: number | null;
     title: string;
     description: string;
     deadline_at: string;
     status: string;
+    
 }
 
 export interface TaskForm {
