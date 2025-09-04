@@ -1,7 +1,10 @@
 
+import { WelcomeModal } from '@/components/modals/WelcomeModal';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { useModalManager } from '@/hooks/useModalManager';
 import AppLayout from '@/layouts/app-layout';
+import { Users } from '@/types/shared/users';
 import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell } from 'recharts';
 
 interface UserDashboardProps {
@@ -10,18 +13,14 @@ interface UserDashboardProps {
         tasks: { [status: string]: number };
         projects: { [status: string]: number };
     };
-    user: {
-        id: number;
-        first_name: string;
-        last_name: string;
-        email: string;
-        role: string;
-    };
+    user: Users;
     taskStatusLabels: { value: string; label: string }[];
     projectStatusLabels: { value: string; label: string }[];
 }
 
 export default function UserDashboard({ stats, user, taskStatusLabels, projectStatusLabels }: UserDashboardProps) {
+
+    const { modalState, closeWelcomeModal } = useModalManager(user);
     // Define color palettes for statuses (color-blind friendly and visually pleasing)
     const statusColors: Record<string, string> = {
         pending: '#60a5fa', // blue
@@ -140,6 +139,13 @@ export default function UserDashboard({ stats, user, taskStatusLabels, projectSt
                     </Card>
                 </div>
             </div>
+
+            {/* Role-based Modals */}
+            <WelcomeModal 
+                isOpen={modalState.showWelcomeModal}
+                onClose={closeWelcomeModal}
+                user={user}
+            />
         </AppLayout>
     );
 }

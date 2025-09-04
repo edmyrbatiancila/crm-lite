@@ -1,14 +1,11 @@
-import AppLogoIcon from './app-logo-icon';
-
 export default function AppLogo() {
     return (
-        <>
-            <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
-                <AppLogoIcon className="size-5 fill-current text-white dark:text-black" />
-            </div>
-            <div className="ml-1 grid flex-1 text-left text-sm">
-                <span className="mb-0.5 truncate leading-tight font-semibold">CRM-Lite</span>
-            </div>
-        </>
+        <div className="flex items-center justify-center p-3 rounded-xl bg-gradient-to-br from-white/20 to-white/10 dark:from-white/10 dark:to-white/5 backdrop-blur-sm border border-white/20 dark:border-white/10">
+            <img 
+                src="/img/crm_lite_transparent_logo.png" 
+                alt="CRM-Lite Logo" 
+                className="size-30 object-contain drop-shadow-lg dark:brightness-125 dark:contrast-110"
+            />
+        </div>
     );
 }

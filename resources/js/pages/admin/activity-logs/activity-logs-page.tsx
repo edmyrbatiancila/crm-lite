@@ -18,7 +18,6 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Separator } from '@/components/ui/separator';
-import { Breadcrumbs } from '@/components/breadcrumbs';
 import SearchAndFilter from '@/components/shared/search-and-filter';
 import ResponsivePagination from '@/components/shared/responsive-pagination';
 import { useSearchAndFilter } from '@/hooks/use-search-and-filter';

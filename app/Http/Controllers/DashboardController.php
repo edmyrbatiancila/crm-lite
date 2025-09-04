@@ -163,6 +163,9 @@ class DashboardController extends Controller
                     'last_name' => $user->last_name,
                     'email' => $user->email,
                     'role' => $user->role ?? 'user',
+                    'first_login_at' => $user->first_login_at?->toISOString(),
+                    'last_login_at' => $user->last_login_at?->toISOString(),
+                    'created_at' => $user->created_at->toISOString(),
                 ],
                 'taskStatusLabels' => [
                     ['value' => 'pending', 'label' => 'Pending'],

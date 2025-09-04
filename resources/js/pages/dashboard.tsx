@@ -13,6 +13,7 @@ import { useModalManager } from '@/hooks/useModalManager';
 import { type BreadcrumbItem } from '@/types';
 import { BarChart3, Calendar } from 'lucide-react';
 import { TaskChartStatus } from '@/types/tasks/ITasks';
+import { Users } from '@/types/shared/users';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -51,16 +52,7 @@ interface DashboardProps {
         tasks: number;
         users: number;
     }>;
-    user: {
-        id: number;
-        first_name: string;
-        last_name: string;
-        email: string;
-        role: string;
-        first_login_at: string | null;
-        last_login_at: string | null;
-        created_at: string;
-    };
+    user: Users;
     adminData?: {
         stats: {
             newUsersToday: number;

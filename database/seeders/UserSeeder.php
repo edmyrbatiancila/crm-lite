@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
             'first_name' => 'Admin',
             'last_name' => 'Nistrator',
             'email' => 'admin@gmail.com',
-            'password' => 'inamawMana',
+            'password' => 'admin123', // Default password for admin
             'role' => RoleEnum::ADMIN->value // Set the role column
         ])->syncRoles([RoleEnum::ADMIN]);
     }
