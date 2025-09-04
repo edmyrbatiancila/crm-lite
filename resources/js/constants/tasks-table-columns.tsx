@@ -51,7 +51,7 @@ export const taksColumns = (
             className: "min-w-[100px] max-w-[120px]",
             render: (t) => (
                 <div className="text-sm">
-                    {t.assigned_user ? t.assigned_user.name : 'Unassigned'}
+                    {t.assigned_user ? t.assigned_user.first_name : 'Unassigned'}
                 </div>
             )
         }

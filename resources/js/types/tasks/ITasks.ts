@@ -1,4 +1,5 @@
 import { BreadcrumbItem } from "..";
+import { AssignTo } from "../shared/assign-to";
 
 
 
@@ -8,7 +9,7 @@ export interface Tasks {
     description: string;
     deadline_at: string;
     status: string;
-    
+    assigned_user?: AssignTo;
 }
 
 export interface TaskForm {
