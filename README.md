@@ -492,3 +492,4 @@ This project is open-source software licensed under the [MIT License](LICENSE).
 If you find this project helpful, please consider giving it a ⭐ on GitHub!
 
 [⬆ Back to Top](#-crm-lite-modern-customer-relationship-management-system)
+# Railway deployment trigger
