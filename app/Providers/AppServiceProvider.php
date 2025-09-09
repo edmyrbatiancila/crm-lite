@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 use App\Models\Task;
 use App\Models\Project;
 use App\Models\Client;
@@ -27,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTPS in production
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
+        
         // Register model observers for dynamic notifications
         Task::observe(TaskObserver::class);
         Project::observe(ProjectObserver::class);

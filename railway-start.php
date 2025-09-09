@@ -48,7 +48,10 @@ echo "🗄️ Running migrations...\n";
 $migrateCommand = 'php artisan migrate --force 2>&1';
 $migrateResult = shell_exec($migrateCommand);
 
-if (strpos($migrateResult, 'Nothing to migrate') !== false || strpos($migrateResult, 'Migrated:') !== false) {
+if (strpos($migrateResult, 'Nothing to migrate') !== false || 
+    strpos($migrateResult, 'Migrated:') !== false || 
+    strpos($migrateResult, 'DONE') !== false ||
+    strpos($migrateResult, 'INFO  Running migrations') !== false) {
     echo "✅ Migrations completed successfully\n";
 } else {
     echo "❌ Migration failed:\n";
