@@ -1,5 +1,8 @@
 <?php
 
+// Parse DATABASE_URL for Railway deployment
+require_once __DIR__ . '/database_url_parser.php';
+
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\ShareNotificationData;
