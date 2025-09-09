@@ -343,6 +343,92 @@ php artisan test --coverage
 - **Database Tests**: Database interaction testing
 - **API Tests**: API endpoint testing
 
+## 🚀 Deployment
+
+### Railway Deployment (Recommended for Free Hosting)
+
+CRM-lite is optimized for deployment on [Railway.app](https://railway.app), which offers free tier hosting with PostgreSQL database.
+
+#### Prerequisites
+- Railway account (free)
+- GitHub repository with your code
+
+#### Step-by-Step Deployment
+
+1. **Create Railway Project**
+   ```bash
+   # Install Railway CLI (optional)
+   npm install -g @railway/cli
+   
+   # Or use Railway dashboard at railway.app
+   ```
+
+2. **Add PostgreSQL Service**
+   - In Railway dashboard, click "New" → "Database" → "PostgreSQL"
+   - Railway will automatically provide `DATABASE_URL` environment variable
+
+3. **Deploy from GitHub**
+   - Click "New" → "GitHub Repo"
+   - Select your forked repository
+   - Railway will auto-detect Laravel and configure build settings
+
+4. **Set Environment Variables**
+   Copy these variables to Railway dashboard → Variables:
+   ```env
+   APP_NAME=CRM-lite
+   APP_ENV=production
+   APP_DEBUG=false
+   DB_CONNECTION=pgsql
+   APP_KEY=base64:your_generated_key_here
+   ```
+   
+   **Important**: Don't set `DATABASE_URL` manually - Railway provides it automatically.
+
+5. **Generate APP_KEY**
+   ```bash
+   php artisan key:generate --show
+   ```
+   Copy the output and set it as `APP_KEY` in Railway variables.
+
+6. **Configure Domain**
+   - Railway will provide a free `.railway.app` subdomain
+   - Set `APP_URL` to your Railway domain (done automatically via `RAILWAY_PUBLIC_DOMAIN`)
+
+7. **Deploy**
+   - Push changes to your GitHub repository
+   - Railway will automatically build and deploy
+   - Database migrations run automatically during deployment
+
+#### Deployment Files Included
+- `Procfile`: Defines the start command
+- `railway.json`: Railway-specific configuration
+- `.env.railway`: Template for environment variables
+
+#### Troubleshooting Deployment
+
+**Database Connection Issues:**
+- Ensure `DB_CONNECTION=pgsql` is set
+- Verify PostgreSQL service is linked to your app
+- Check that `DATABASE_URL` is automatically provided by Railway
+
+**Build Failures:**
+- Check Railway build logs for specific errors
+- Ensure all dependencies are in `composer.json` and `package.json`
+- Verify PHP version compatibility (8.2+)
+
+**Migration Failures:**
+- Database migrations run automatically via `composer.json` scripts
+- Check logs for specific migration errors
+- Ensure PostgreSQL service is running and connected
+
+#### Alternative Deployment Options
+
+**Other Platforms:**
+- **Heroku**: Similar to Railway with PostgreSQL add-on
+- **DigitalOcean App Platform**: Container-based deployment
+- **AWS/Azure**: For production-scale applications
+- **Shared Hosting**: Traditional cPanel hosting with modifications
+
 ## 🤝 Contributing
 
 I welcome contributions from the community! Here's how you can help:
