@@ -3,13 +3,7 @@
     "builder": "nixpacks"
   },
   "deploy": {
-    "startCommand": "bash start.sh",
+    "startCommand": "php railway-start.php",
     "healthcheckPath": "/up"
-  },
-  "services": {
-    "web": {
-      "buildCommand": "composer install --no-dev --optimize-autoloader && npm ci && npm run build",
-      "startCommand": "bash start.sh"
-    }
   }
 }

@@ -1,1 +1,1 @@
-web: bash start.sh
+web: php railway-start.php
