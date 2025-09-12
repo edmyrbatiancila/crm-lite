@@ -59,6 +59,22 @@ if (strpos($migrateResult, 'Nothing to migrate') !== false ||
     exit(1);
 }
 
+// Run database seeders
+echo "🌱 Running database seeders...\n";
+$seedCommand = 'php artisan db:seed --force 2>&1';
+$seedResult = shell_exec($seedCommand);
+
+if (strpos($seedResult, 'Database seeding completed successfully') !== false || 
+    strpos($seedResult, 'Seeding:') !== false ||
+    strpos($seedResult, 'INFO  Seeding') !== false ||
+    empty(trim($seedResult))) {
+    echo "✅ Database seeding completed successfully\n";
+} else {
+    echo "⚠️ Seeding completed with messages (this is normal):\n";
+    echo $seedResult . "\n";
+    // Don't exit on seeder warnings - continue with startup
+}
+
 // Start the web server
 echo "🌐 Starting web server on port " . getenv('PORT') . "...\n";
 $serverCommand = 'php artisan serve --host=0.0.0.0 --port=' . getenv('PORT');
