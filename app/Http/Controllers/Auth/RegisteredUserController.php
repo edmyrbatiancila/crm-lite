@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -37,17 +38,54 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ])->assignRole('user');
+        try {
+            // Create the user
+            $user = User::create([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        event(new Registered($user));
+            // Assign default user role with error handling
+            try {
+                $user->assignRole('user');
+            } catch (\Exception $roleException) {
+                Log::warning('Failed to assign role during registration: ' . $roleException->getMessage(), [
+                    'user_id' => $user->id,
+                    'email' => $user->email
+                ]);
+                // Continue without failing - role can be assigned later by admin
+            }
 
-        Auth::login($user);
+            // Fire the registered event (this will trigger UserObserver)
+            try {
+                event(new Registered($user));
+            } catch (\Exception $eventException) {
+                Log::warning('Failed to fire registered event: ' . $eventException->getMessage(), [
+                    'user_id' => $user->id,
+                    'email' => $user->email
+                ]);
+                // Continue without failing - notifications are not critical for registration
+            }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+            // Login the user
+            Auth::login($user);
+
+            return redirect()->intended(route('dashboard', absolute: false));
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('User registration failed: ' . $e->getMessage(), [
+                'email' => $request->email,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'exception' => $e->getTraceAsString()
+            ]);
+
+            // Return with error message
+            return back()->withErrors([
+                'email' => 'Registration failed. Please try again later.'
+            ])->withInput($request->except('password', 'password_confirmation'));
+        }
     }
 }
