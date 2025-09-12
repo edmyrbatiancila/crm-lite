@@ -28,9 +28,29 @@ export function useModalManager(user: User) {
             const adminModalKey = `admin_modal_dismissed_${user.id}`;
             
             const isAdmin = user.role === 'admin' || user.role === 'administrator';
-            const isFirstTimeUser = user.first_login_at === null;
+            
+            // Check if this is a truly first-time user
+            const isFirstTimeUser = (() => {
+                // If first_login_at is null, definitely first time
+                if (user.first_login_at === null) {
+                    return true;
+                }
+                
+                // If first_login_at is set, check if it's within the last few minutes (indicating they just registered and got logged in)
+                const firstLoginDate = new Date(user.first_login_at);
+                const now = new Date();
+                const timeDifference = now.getTime() - firstLoginDate.getTime();
+                const minutesSinceFirstLogin = timeDifference / (1000 * 60);
+                
+                // Also check if they registered recently (same day)
+                const createdDate = new Date(user.created_at);
+                const isSameDay = createdDate.toDateString() === now.toDateString();
+                
+                // Consider it first time if they logged in within 5 minutes AND registered today
+                return minutesSinceFirstLogin <= 5 && isSameDay;
+            })();
 
-            // Only show welcome modal for first-time users (never logged in before)
+            // Only show welcome modal for first-time users (never logged in before or just registered)
             if (!isAdmin && isFirstTimeUser && !localStorage.getItem(welcomeModalKey)) {
                 setModalState(prev => ({ ...prev, showWelcomeModal: true }));
             } else if (isAdmin && isFirstTimeUser && !localStorage.getItem(adminModalKey)) {
