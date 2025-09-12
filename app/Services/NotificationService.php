@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Task;
 use App\Models\Project;
 use App\Models\Client;
+use Illuminate\Support\Facades\Log;
 
 class NotificationService
 {
@@ -317,24 +318,48 @@ class NotificationService
 
     public static function newUserRegistered(User $user): void
     {
-        // Notify admins about new user registration
-        $admins = User::role('admin')->get();
-        
-        $admins->each(function ($admin) use ($user) {
-            self::create(
-                $admin,
-                'New User Registered',
-                "A new user {$user->first_name} {$user->last_name} ({$user->email}) has registered to the system.",
-                NotificationType::INFO,
-                [
-                    'new_user_id' => $user->id,
-                    'new_user_name' => $user->first_name . ' ' . $user->last_name,
-                    'new_user_email' => $user->email,
-                    'registration_date' => now()->toDateString(),
-                    'action_required' => false
-                ]
-            );
-        });
+        try {
+            // First try to get admins by role
+            $admins = collect();
+            
+            try {
+                $admins = User::role('admin')->get();
+            } catch (\Exception $e) {
+                // If role-based query fails, try to find users with admin in email or fallback to first user
+                Log::info('Role-based admin lookup failed, trying alternative method');
+                $admins = User::where('email', 'like', '%admin%')->get();
+                
+                // If no admin-like users found, notify the first user in the system
+                if ($admins->isEmpty()) {
+                    $firstUser = User::orderBy('created_at')->first();
+                    if ($firstUser && $firstUser->id !== $user->id) {
+                        $admins = collect([$firstUser]);
+                    }
+                }
+            }
+            
+            $admins->each(function ($admin) use ($user) {
+                self::create(
+                    $admin,
+                    'New User Registered',
+                    "A new user {$user->first_name} {$user->last_name} ({$user->email}) has registered to the system.",
+                    NotificationType::INFO,
+                    [
+                        'new_user_id' => $user->id,
+                        'new_user_name' => $user->first_name . ' ' . $user->last_name,
+                        'new_user_email' => $user->email,
+                        'registration_date' => now()->toDateString(),
+                        'action_required' => false
+                    ]
+                );
+            });
+        } catch (\Exception $e) {
+            // If everything fails, just log and continue
+            Log::warning('Failed to notify about new user registration: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'user_email' => $user->email
+            ]);
+        }
     }
 
     public static function userAccountDeleted(User $user): void

@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\User;
 use App\Services\NotificationService;
+use Illuminate\Support\Facades\Log;
 
 class UserObserver
 {
@@ -12,11 +13,20 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        // Send welcome notification to the newly created user
-        NotificationService::userWelcome($user);
-        
-        // Notify admins about new user registration
-        NotificationService::newUserRegistered($user);
+        try {
+            // Send welcome notification to the newly created user
+            NotificationService::userWelcome($user);
+            
+            // Notify admins about new user registration
+            NotificationService::newUserRegistered($user);
+        } catch (\Exception $e) {
+            // Log the error but don't fail the user creation
+            Log::error('Failed to create user notifications: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+                'exception' => $e->getTraceAsString()
+            ]);
+        }
     }
 
     /**

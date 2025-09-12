@@ -92,7 +92,13 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $this->authorize('create', User::class);
-        User::create($request->validated());
+        
+        $user = User::create($request->validated());
+        
+        // Assign default user role if no role is specified
+        if (!$user->hasAnyRole()) {
+            $user->assignRole('user');
+        }
 
         return redirect()->route('users.index')->with('success', 'User successfully created');
     }
