@@ -58,11 +58,17 @@ class DebugUserRoles extends Command
         $this->info("   canManageProjects(): " . ($user->canManageProjects() ? '✅ true' : '❌ false'));
         $this->info("   canManageTasks(): " . ($user->canManageTasks() ? '✅ true' : '❌ false'));
         
+        // Show specific client permissions
+        $this->info("\n👥 Client Access:");
+        $this->info("   hasPermission('view clients'): " . ($user->hasPermissionTo('view clients') ? '✅ true' : '❌ false'));
+        $this->info("   hasPermission('manage clients'): " . ($user->hasPermissionTo('manage clients') ? '✅ true' : '❌ false'));
+        
         // Check all roles in system
         $this->info("\n🌐 All Roles in System:");
         $allRoles = Role::all();
         foreach ($allRoles as $role) {
-            $this->info("   - {$role->name}");
+            $userCount = $role->users()->count();
+            $this->info("   - {$role->name} ({$userCount} users)");
         }
         
         // Check all permissions in system
@@ -72,12 +78,26 @@ class DebugUserRoles extends Command
             $this->info("   - {$permission->name}");
         }
         
+        // Check users without roles
+        $usersWithoutRoles = User::whereDoesntHave('roles')->count();
+        $this->info("\n⚠️ Users without any roles: {$usersWithoutRoles}");
+        
         // Check admin role permissions
         $adminRole = Role::where('name', 'admin')->first();
         if ($adminRole) {
             $this->info("\n👑 Admin Role Permissions:");
             $adminPermissions = $adminRole->permissions;
             foreach ($adminPermissions as $permission) {
+                $this->info("   - {$permission->name}");
+            }
+        }
+        
+        // Check user role permissions
+        $userRole = Role::where('name', 'user')->first();
+        if ($userRole) {
+            $this->info("\n👤 User Role Permissions:");
+            $userPermissions = $userRole->permissions;
+            foreach ($userPermissions as $permission) {
                 $this->info("   - {$permission->name}");
             }
         }

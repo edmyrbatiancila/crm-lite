@@ -93,6 +93,12 @@ $verifyCommand = 'php artisan debug:user-roles admin@gmail.com 2>&1';
 $verifyResult = shell_exec($verifyCommand);
 echo $verifyResult . "\n";
 
+// Fix all users without roles
+echo "👥 Fixing users without roles...\n";
+$fixUsersCommand = 'php artisan fix:user-roles 2>&1';
+$fixUsersResult = shell_exec($fixUsersCommand);
+echo $fixUsersResult . "\n";
+
 // Start the web server
 echo "🌐 Starting web server on port " . getenv('PORT') . "...\n";
 $serverCommand = 'php artisan serve --host=0.0.0.0 --port=' . getenv('PORT');

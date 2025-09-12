@@ -14,15 +14,15 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create regular users first
-        User::factory(10)->create();
+        $this->command->info('👥 Starting UserSeeder...');
         
-        // Create admin user with proper error handling
         try {
-            // Ensure the admin role exists before creating user
+            // Ensure both roles exist before creating users
             $adminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => RoleEnum::ADMIN->value]);
-            
-            // Create or find admin user
+            $userRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => RoleEnum::USER->value]);
+            $this->command->info("✅ Roles verified: admin and user");
+
+            // Create admin user with proper error handling
             $adminUser = User::updateOrCreate(
                 ['email' => 'admin@gmail.com'], // Find by email
                 [
@@ -40,9 +40,23 @@ class UserSeeder extends Seeder
             } else {
                 $this->command->info("ℹ️ Admin user already has admin role: {$adminUser->email}");
             }
+
+            // Create regular users and ensure they get the user role
+            $this->command->info("👤 Creating 10 regular users...");
+            $regularUsers = User::factory(10)->create();
+            
+            // Ensure all regular users have the user role
+            foreach ($regularUsers as $user) {
+                if (!$user->hasRole(RoleEnum::USER)) {
+                    $user->assignRole(RoleEnum::USER);
+                    $this->command->info("✅ User role assigned to: {$user->email}");
+                }
+            }
+            
+            $this->command->info("🎉 UserSeeder completed successfully - " . (count($regularUsers) + 1) . " users created");
             
         } catch (\Exception $e) {
-            $this->command->error("❌ Failed to create admin user: " . $e->getMessage());
+            $this->command->error("❌ Failed to create users: " . $e->getMessage());
             throw $e;
         }
     }
