@@ -1,4 +1,4 @@
-import { NavFooter } from '@/components/nav-footer';
+// import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
@@ -25,7 +25,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter className="relative z-20">
-                <NavFooter className="mt-auto" />
+                {/* <NavFooter className="mt-auto" /> */}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
