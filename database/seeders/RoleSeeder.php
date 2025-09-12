@@ -15,8 +15,11 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->command->info('🎭 Starting RoleSeeder...');
+        
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        $this->command->info('🧹 Cleared permission cache');
 
         // Create Permissions
         $permissions = [
@@ -56,13 +59,16 @@ class RoleSeeder extends Seeder
             'delete leads',
         ];
 
+        $this->command->info("📝 Creating " . count($permissions) . " permissions...");
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
+        $this->command->info("✅ Permissions created");
 
         // Create admin role and assign all permissions
         $adminRole = Role::firstOrCreate(['name' => RoleEnum::ADMIN]);
         $adminRole->syncPermissions($permissions);
+        $this->command->info("👑 Admin role created with " . count($permissions) . " permissions");
 
         // Create user role with limited permissions
         $userRole = Role::firstOrCreate(['name' => RoleEnum::USER]);
@@ -76,5 +82,7 @@ class RoleSeeder extends Seeder
             'view leads',
             'create leads'
         ]);
+        $this->command->info("👤 User role created with limited permissions");
+        $this->command->info("🎉 RoleSeeder completed successfully");
     }
 }

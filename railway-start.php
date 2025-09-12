@@ -81,6 +81,18 @@ $debugCommand = 'php artisan debug:user-roles admin@gmail.com 2>&1';
 $debugResult = shell_exec($debugCommand);
 echo $debugResult . "\n";
 
+// Fix admin user if roles are missing
+echo "🔧 Fixing admin user roles if needed...\n";
+$fixCommand = 'php artisan fix:admin-user admin@gmail.com 2>&1';
+$fixResult = shell_exec($fixCommand);
+echo $fixResult . "\n";
+
+// Debug again to verify fix
+echo "🔍 Verifying admin user fix...\n";
+$verifyCommand = 'php artisan debug:user-roles admin@gmail.com 2>&1';
+$verifyResult = shell_exec($verifyCommand);
+echo $verifyResult . "\n";
+
 // Start the web server
 echo "🌐 Starting web server on port " . getenv('PORT') . "...\n";
 $serverCommand = 'php artisan serve --host=0.0.0.0 --port=' . getenv('PORT');
