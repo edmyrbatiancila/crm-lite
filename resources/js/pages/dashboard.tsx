@@ -13,6 +13,7 @@ import { useModalManager } from '@/hooks/useModalManager';
 import { type BreadcrumbItem } from '@/types';
 import { BarChart3, Calendar } from 'lucide-react';
 import { TaskChartStatus } from '@/types/tasks/ITasks';
+import { DebugUserData } from '@/components/debug/DebugUserData';
 import { Users } from '@/types/shared/users';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -205,6 +206,7 @@ export default function Dashboard({ stats, monthlyData, user, adminData }: Dashb
                     user={user}
                 />
             )}
+            <DebugUserData />
         </AppLayout>
     );
 }

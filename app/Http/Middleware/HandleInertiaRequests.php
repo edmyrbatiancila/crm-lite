@@ -56,6 +56,9 @@ class HandleInertiaRequests extends Middleware
                     'can_manage_projects' => $request->user()->canManageProjects(),
                     'can_manage_tasks' => $request->user()->canManageTasks(),
                     'can_manage_leads' => $request->user()->canManageLeads(),
+                    // Debug info for production
+                    'debug_roles' => $request->user()->roles()->pluck('name'),
+                    'debug_permissions' => $request->user()->permissions()->pluck('name'),
                 ] : null,
             ],
             'ziggy' => fn (): array => [

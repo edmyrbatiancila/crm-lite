@@ -15,9 +15,20 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        Permission::create(['name' => 'manage_users']);
+        // Reset cached roles and permissions
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $role = Role::findByName(RoleEnum::ADMIN->value);
-        $role->givePermissionTo('manage_users');
+        // This seeder is now redundant since RoleSeeder handles all permissions
+        // Keep it for compatibility but don't create conflicting permissions
+        
+        // Ensure admin role has the manage users permission
+        $adminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin']);
+        
+        // Make sure the permission exists (should be created by RoleSeeder)
+        $manageUsersPermission = \Spatie\Permission\Models\Permission::firstOrCreate(['name' => 'manage users']);
+        
+        if (!$adminRole->hasPermissionTo('manage users')) {
+            $adminRole->givePermissionTo('manage users');
+        }
     }
 }

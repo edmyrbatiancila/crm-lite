@@ -75,6 +75,12 @@ if (strpos($seedResult, 'Database seeding completed successfully') !== false ||
     // Don't exit on seeder warnings - continue with startup
 }
 
+// Debug user roles for admin user
+echo "🔍 Debugging admin user roles and permissions...\n";
+$debugCommand = 'php artisan debug:user-roles admin@gmail.com 2>&1';
+$debugResult = shell_exec($debugCommand);
+echo $debugResult . "\n";
+
 // Start the web server
 echo "🌐 Starting web server on port " . getenv('PORT') . "...\n";
 $serverCommand = 'php artisan serve --host=0.0.0.0 --port=' . getenv('PORT');
