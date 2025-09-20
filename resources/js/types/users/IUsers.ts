@@ -23,6 +23,7 @@ export interface User {
     email: string;
     first_login_at: string | null;
     last_login_at: string | null;
+    created_at: string;
 };
 
 export interface UsersChart {

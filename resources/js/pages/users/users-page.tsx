@@ -1,8 +1,7 @@
-import DataLists from "@/components/shared/data-lists";
+import UsersList from "@/components/users/users-list";
 import PagePagination from "@/components/shared/page-pagination";
 import SearchAndFilter from "@/components/shared/search-and-filter";
 import SetupContent from "@/components/shared/setup-content";
-import { userColumns } from "@/constants/user-table-columns";
 import { userFilterOptions, userSortOptions } from "@/config/filters";
 import { useSearchAndFilter } from "@/hooks/use-search-and-filter";
 import AppLayout from "@/layouts/app-layout";
@@ -156,10 +155,11 @@ export default function UsersPage({ users }: IUsersPageProps) {
                             onReset={handleReset}
                             placeholder="Search users by name or email..."
                         />
-                        <DataLists<User>
-                            keyExtractor={ (user) => user.id }
-                            data={ onData }
-                            columns={ userColumns(onDelete, canEdit, canDelete) }
+                        <UsersList
+                            data={onData}
+                            onDelete={onDelete}
+                            canEdit={canEdit}
+                            canDelete={canDelete}
                         />
                     </>
                 )) }
