@@ -6,6 +6,7 @@ import { features } from '@/data/login-page/login-page-features';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAppearance } from '@/hooks/use-appearance';
+import { Link } from '@inertiajs/react';
 
 interface AuthLayoutProps {
     name?: string;
@@ -61,7 +62,11 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                             <div className="h-10 w-10 rounded-lg bg-white/20 dark:bg-white/30 backdrop-blur-sm flex items-center justify-center">
                                 <Building2 className="h-6 w-6" />
                             </div>
-                            <h1 className="text-2xl font-bold">CRM Lite</h1>
+                            <Link href={route('home')}>
+                                <h1 className="text-2xl font-bold cursor-pointer hover:text-blue-200 dark:hover:text-blue-100 transition-colors duration-300">
+                                    CRM Lite
+                                </h1>
+                            </Link>
                         </div>
 
                         <h2 className="text-4xl font-bold mb-4 leading-tight">

@@ -25,6 +25,12 @@ export interface User {
     last_login_at: string | null;
 };
 
+export interface UsersChart {
+    total: number;
+    active: number;
+    inactive: number;
+};
+
 export const userBreadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Users',

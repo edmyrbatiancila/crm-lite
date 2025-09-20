@@ -12,9 +12,10 @@ import { AdminUpdatesModal } from '@/components/modals/AdminUpdatesModal';
 import { useModalManager } from '@/hooks/useModalManager';
 import { type BreadcrumbItem } from '@/types';
 import { BarChart3, Calendar } from 'lucide-react';
-import { TaskChartStatus } from '@/types/tasks/ITasks';
-import { DebugUserData } from '@/components/debug/DebugUserData';
+// import { DebugUserData } from '@/components/debug/DebugUserData';
 import { Users } from '@/types/shared/users';
+import { AdminData, DashboardMonthlyData, DashboardStatus } from '@/types/dashboard/IDashboard';
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -24,57 +25,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface DashboardProps {
-    stats: {
-        clients: {
-            total: number;
-            newThisMonth: number;
-            previousMonth: number;
-        };
-        projects: {
-            total: number;
-            open: number;
-            in_progress: number;
-            blocked: number;
-            cancelled: number;
-            completed: number;
-        };
-        tasks: TaskChartStatus;
-        users: {
-            total: number;
-            active: number;
-            inactive: number;
-        };
-    };
-    monthlyData: Array<{
-        month: string;
-        fullMonth: string;
-        clients: number;
-        projects: number;
-        tasks: number;
-        users: number;
-    }>;
+    stats: DashboardStatus;
+    monthlyData: DashboardMonthlyData[];
     user: Users;
-    adminData?: {
-        stats: {
-            newUsersToday: number;
-            newClientsToday: number;
-            newProjectsToday: number;
-            newTasksToday: number;
-            totalUsers: number;
-            totalClients: number;
-            totalProjects: number;
-            totalTasks: number;
-        };
-        recentUpdates: Array<{
-            id: number;
-            type: 'user' | 'client' | 'project' | 'task';
-            title: string;
-            description: string;
-            created_at: string;
-            user_name?: string;
-            status?: string;
-        }>;
-    };
+    adminData?: AdminData;
 }
 
 export default function Dashboard({ stats, monthlyData, user, adminData }: DashboardProps) {
@@ -128,9 +82,6 @@ export default function Dashboard({ stats, monthlyData, user, adminData }: Dashb
                         </div>
                     </div>
                 </motion.div>
-
-                {/* Welcome Card for New Users */}
-                {/* <WelcomeCard user={user} /> */}
 
                 {/* Overview Trends */}
                 <OverviewTrends monthlyData={monthlyData} />
@@ -206,7 +157,7 @@ export default function Dashboard({ stats, monthlyData, user, adminData }: Dashb
                     user={user}
                 />
             )}
-            <DebugUserData />
+            {/* <DebugUserData /> */}
         </AppLayout>
     );
 }

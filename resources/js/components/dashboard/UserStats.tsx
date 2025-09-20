@@ -26,8 +26,8 @@ const userChartConfig = {
 
 export function UserStats({ stats }: UserStatsProps) {
   const chartData = [
-    { name: 'Active', value: stats.active, fill: 'var(--color-active)' },
-    { name: 'Inactive', value: stats.inactive, fill: 'var(--color-inactive)' },
+    { name: 'Active', value: stats.active, fill: '#10B981' }, // Green for active users
+    { name: 'Inactive', value: stats.inactive, fill: '#EF4444' }, // Red for inactive users
   ];
 
   const activeRate = stats.total > 0 ? (stats.active / stats.total) * 100 : 0;

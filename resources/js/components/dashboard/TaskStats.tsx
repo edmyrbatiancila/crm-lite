@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { BarChart, Bar, XAxis, YAxis } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Cell, CartesianGrid } from 'recharts';
 import { ListTodo, Clock, CheckCircle2, Pause, X } from 'lucide-react';
 import { TaskChartStatus } from '@/types/tasks/ITasks';
 import { taskChartConfig } from '@/hooks/dashboard/chartConfig';
@@ -13,12 +13,12 @@ interface TaskStatsProps {
 
 export function TaskStats({ stats }: TaskStatsProps) {
     const chartData = [
-        { status: 'Pending', count: stats.pending, fill: 'var(--color-pending)' },
-        { status: 'In Progress', count: stats.in_progress, fill: 'var(--color-in_progress)' },
-        { status: 'Closed', count: stats.closed, fill: 'var(--color-closed)' },
-        { status: 'Waiting for Client', count: stats.waiting_client, fill: 'var(--color-waiting_client)' },
-        { status: 'Blocked', count: stats.blocked, fill: 'var(--color-blocked)' },
-        { status: 'Open', count: stats.open, fill: 'var(--color-open)' },
+        { status: 'Pending', count: stats.pending, fill: '#3B82F6' }, // Blue
+        { status: 'In Progress', count: stats.in_progress, fill: '#F59E0B' }, // Orange
+        { status: 'Closed', count: stats.closed, fill: '#10B981' }, // Green
+        { status: 'Waiting for Client', count: stats.waiting_client, fill: '#EAB308' }, // Yellow
+        { status: 'Blocked', count: stats.blocked, fill: '#EF4444' }, // Red
+        { status: 'Open', count: stats.open, fill: '#8B5CF6' }, // Purple
     ];
 
     const totalTasks = Object.values(stats).reduce((sum, count) => sum + count, 0);
@@ -69,9 +69,9 @@ export function TaskStats({ stats }: TaskStatsProps) {
             title: 'Open',
             value: stats.open,
             icon: ListTodo,
-            color: 'text-blue-600',
-            bgColor: 'bg-blue-50',
-            iconColor: 'text-blue-500'
+            color: 'text-purple-600',
+            bgColor: 'bg-purple-50',
+            iconColor: 'text-purple-500'
         }
     ];
 
@@ -134,6 +134,12 @@ export function TaskStats({ stats }: TaskStatsProps) {
                                     bottom: 5,
                                 }}
                             >
+                                <CartesianGrid 
+                                    vertical={ false }
+                                    strokeDasharray="3 3" 
+                                    stroke="currentColor" 
+                                    className="opacity-20 dark:opacity-10"
+                                />
                                 <XAxis
                                     dataKey="status"
                                     tickLine={false}
@@ -154,9 +160,12 @@ export function TaskStats({ stats }: TaskStatsProps) {
                                     />
                                 <Bar
                                     dataKey="count"
-                                    fill="var(--color-pending)"
                                     radius={4}
-                                />
+                                >
+                                    {chartData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                                    ))}
+                                </Bar>
                             </BarChart>
                         </ChartContainer>
                     </CardContent>
