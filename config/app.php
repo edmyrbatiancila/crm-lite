@@ -56,6 +56,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Force HTTPS
+    |--------------------------------------------------------------------------
+    |
+    | This option controls whether the application should force HTTPS for all
+    | requests. This is particularly useful for production deployments where
+    | HTTPS should be enforced.
+    |
+    */
+
+    'force_https' => (bool) env('FORCE_HTTPS', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

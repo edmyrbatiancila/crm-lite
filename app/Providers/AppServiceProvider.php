@@ -28,9 +28,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Force HTTPS in production
-        if (app()->environment('production')) {
+        // Force HTTPS in production or when APP_URL is HTTPS
+        if (app()->environment('production') || 
+            (config('app.url') && str_starts_with(config('app.url'), 'https://')) ||
+            (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+            (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+        ) {
             URL::forceScheme('https');
+            URL::forceRootUrl(config('app.url'));
         }
         
         // Register model observers for dynamic notifications

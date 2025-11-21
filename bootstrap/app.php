@@ -3,6 +3,7 @@
 // Parse DATABASE_URL for Railway deployment
 require_once __DIR__ . '/database_url_parser.php';
 
+use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\ShareNotificationData;
@@ -23,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
 
         $middleware->web(append: [
+            ForceHttps::class,
             HandleAppearance::class,
             ShareNotificationData::class,
             \App\Http\Middleware\TrackUserLogin::class,
